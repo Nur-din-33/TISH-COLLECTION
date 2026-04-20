@@ -1,0 +1,153 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id            String    @id @default(uuid())
+  email         String    @unique
+  password      String
+  name          String
+  phone         String?
+  role          Role      @default(CUSTOMER)
+  address       String?
+  city          String?
+  avatar        String?
+  googleId      String?
+  resetToken    String?
+  resetExpiry   DateTime?
+  isVerified    Boolean   @default(false)
+  verifyCode    String?
+  verifyExpiry  DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  orders  Order[]
+  reviews Review[]
+
+  @@map("users")
+}
+
+model Category {
+  id       String    @id @default(uuid())
+  name     String    @unique
+  slug     String    @unique
+  imageUrl String?
+  products Product[]
+
+  @@map("categories")
+}
+
+model Supplier {
+  id       String    @id @default(uuid())
+  name     String
+  email    String    @unique
+  phone    String?
+  country  String    @default("Kenya")
+  apiUrl   String?
+  active   Boolean   @default(true)
+  products Product[]
+
+  @@map("suppliers")
+}
+
+model Product {
+  id          String   @id @default(uuid())
+  name        String
+  slug        String   @unique
+  description String?
+  price       Float
+  costPrice   Float
+  stock       Int      @default(0)
+  imageUrl    String?
+  images      String[] @default([])
+  active      Boolean  @default(true)
+  featured    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  categoryId String
+  category   Category @relation(fields: [categoryId], references: [id])
+  supplierId String
+  supplier   Supplier @relation(fields: [supplierId], references: [id])
+
+  orderItems OrderItem[]
+  reviews    Review[]
+
+  @@map("products")
+}
+
+model Order {
+  id              String      @id @default(uuid())
+  orderNumber     String      @unique
+  status          OrderStatus @default(PENDING)
+  totalAmount     Float
+  shippingAddress String
+  shippingCity    String
+  phone           String
+  notes           String?
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  userId  String
+  user    User        @relation(fields: [userId], references: [id])
+  items   OrderItem[]
+  payment Payment?
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id        String  @id @default(uuid())
+  quantity  Int
+  unitPrice Float
+  total     Float
+
+  orderId   String
+  order     Order   @relation(fields: [orderId], references: [id])
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+
+  @@map("order_items")
+}
+
+model Payment {
+  id                 String        @id @default(uuid())
+  method             PaymentMethod @default(MPESA)
+  status             PaymentStatus @default(PENDING)
+  amount             Float
+  mpesaCode          String?
+  mpesaReceiptNumber String?
+  phoneNumber        String?
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
+
+  orderId String @unique
+  order   Order  @relation(fields: [orderId], references: [id])
+
+  @@map("payments")
+}
+
+model Review {
+  id        String   @id @default(uuid())
+  rating    Int
+  comment   String?
+  createdAt DateTime @default(now())
+
+  userId    String
+  user      User    @relation(fields: [userId], references: [id])
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+
+  @@map("reviews")
+}
+
+enum Role { CUSTOMER ADMIN }
+enum OrderStatus { PENDING CONFIRMED PROCESSING SHIPPED DELIVERED CANCELLED }
+enum PaymentMethod { MPESA CARD CASH_ON_DELIVERY }
+enum PaymentStatus { PENDING COMPLETED FAILED REFUNDED }
