@@ -9,23 +9,23 @@ datasource db {
 }
 
 model User {
-  id            String    @id @default(uuid())
-  email         String    @unique
-  password      String
-  name          String
-  phone         String?
-  role          Role      @default(CUSTOMER)
-  address       String?
-  city          String?
-  avatar        String?
-  googleId      String?
-  resetToken    String?
-  resetExpiry   DateTime?
-  isVerified    Boolean   @default(false)
-  verifyCode    String?
-  verifyExpiry  DateTime?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  id           String    @id @default(uuid())
+  email        String    @unique
+  password     String
+  name         String
+  phone        String?
+  role         Role      @default(CUSTOMER)
+  address      String?
+  city         String?
+  avatar       String?
+  googleId     String?
+  resetToken   String?
+  resetExpiry  DateTime?
+  isVerified   Boolean   @default(false)
+  verifyCode   String?
+  verifyExpiry DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
 
   orders  Order[]
   reviews Review[]
@@ -73,6 +73,7 @@ model Product {
 
   categoryId String
   category   Category @relation(fields: [categoryId], references: [id])
+
   supplierId String
   supplier   Supplier @relation(fields: [supplierId], references: [id])
 
@@ -103,13 +104,14 @@ model Order {
 }
 
 model OrderItem {
-  id        String  @id @default(uuid())
+  id        String @id @default(uuid())
   quantity  Int
   unitPrice Float
   total     Float
 
   orderId   String
   order     Order   @relation(fields: [orderId], references: [id])
+
   productId String
   product   Product @relation(fields: [productId], references: [id])
 
@@ -141,13 +143,36 @@ model Review {
 
   userId    String
   user      User    @relation(fields: [userId], references: [id])
+
   productId String
   product   Product @relation(fields: [productId], references: [id])
 
   @@map("reviews")
 }
 
-enum Role { CUSTOMER ADMIN }
-enum OrderStatus { PENDING CONFIRMED PROCESSING SHIPPED DELIVERED CANCELLED }
-enum PaymentMethod { MPESA CARD CASH_ON_DELIVERY }
-enum PaymentStatus { PENDING COMPLETED FAILED REFUNDED }
+enum Role {
+  CUSTOMER
+  ADMIN
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+enum PaymentMethod {
+  MPESA
+  CARD
+  CASH_ON_DELIVERY
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+}
