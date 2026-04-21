@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { persist, createJSONStorage } from 'zustand/middleware';
 
 // ─── Auth Store ───────────────────────────────────────────────────────────────
 export const useAuthStore = create(
@@ -10,26 +10,26 @@ export const useAuthStore = create(
 
       setAuth: (user, token) => {
         set({ user, token });
-        if (typeof window !== 'undefined') {
-          localStorage.setItem('token', token);
-          localStorage.setItem('user', JSON.stringify(user));
-        }
       },
 
       logout: () => {
         set({ user: null, token: null });
-        if (typeof window !== 'undefined') {
-          localStorage.removeItem('token');
-          localStorage.removeItem('user');
-        }
-      },
-
-      isAdmin: () => {
-        const state = useAuthStore.getState();
-        return state.user?.role === 'ADMIN';
       },
     }),
-    { name: 'auth-storage' }
+    {
+      name: 'auth-storage',
+      storage: createJSONStorage(() => {
+        // Safe storage — returns empty during SSR
+        if (typeof window === 'undefined') {
+          return {
+            getItem: () => null,
+            setItem: () => {},
+            removeItem: () => {},
+          };
+        }
+        return localStorage;
+      }),
+    }
   )
 );
 
@@ -56,9 +56,9 @@ export const useCartStore = create(
               ...items,
               {
                 productId: product.id,
-                name: product.name,
-                price: product.price,
-                imageUrl: product.imageUrl,
+                name:      product.name,
+                price:     product.price,
+                imageUrl:  product.imageUrl,
                 quantity,
               },
             ],
@@ -84,14 +84,25 @@ export const useCartStore = create(
 
       clearCart: () => set({ items: [] }),
 
-      getTotal: () => {
-        return get().items.reduce((sum, i) => sum + i.price * i.quantity, 0);
-      },
+      getTotal: () =>
+        get().items.reduce((sum, i) => sum + i.price * i.quantity, 0),
 
-      getCount: () => {
-        return get().items.reduce((sum, i) => sum + i.quantity, 0);
-      },
+      getCount: () =>
+        get().items.reduce((sum, i) => sum + i.quantity, 0),
     }),
-    { name: 'cart-storage' }
+    {
+      name: 'cart-storage',
+      storage: createJSONStorage(() => {
+        // Safe storage — returns empty during SSR
+        if (typeof window === 'undefined') {
+          return {
+            getItem: () => null,
+            setItem: () => {},
+            removeItem: () => {},
+          };
+        }
+        return localStorage;
+      }),
+    }
   )
 );

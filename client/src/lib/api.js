@@ -7,6 +7,7 @@ const api = axios.create({
   headers: { 'Content-Type': 'application/json' },
 });
 
+// Attach JWT token to every request automatically
 api.interceptors.request.use((config) => {
   if (typeof window !== 'undefined') {
     const token = localStorage.getItem('token');
@@ -15,13 +16,17 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+// Handle 401 errors — redirect to login
 api.interceptors.response.use(
   (r) => r,
   (error) => {
-    if (error.response?.status === 401 && typeof window !== 'undefined') {
+    if (typeof window !== 'undefined' && error.response?.status === 401) {
       localStorage.removeItem('token');
       localStorage.removeItem('user');
-      window.location.href = '/login';
+      // Use Next.js router instead of window.location to avoid SSR issues
+      if (typeof window !== 'undefined') {
+        window.location.href = '/login';
+      }
     }
     return Promise.reject(error);
   }
@@ -41,11 +46,11 @@ export const authApi = {
 
 // ── Products ──────────────────────────────────────────
 export const productsApi = {
-  getAll:       (params) => api.get('/products', { params }),
-  getOne:       (slug)   => api.get(`/products/${slug}`),
-  getCategories:()       => api.get('/products/categories/all'),
-  create:       (data)   => api.post('/products', data),
-  update:       (id, data) => api.patch(`/products/${id}`, data),
+  getAll:        (params)     => api.get('/products', { params }),
+  getOne:        (slug)       => api.get(`/products/${slug}`),
+  getCategories: ()           => api.get('/products/categories/all'),
+  create:        (data)       => api.post('/products', data),
+  update:        (id, data)   => api.patch(`/products/${id}`, data),
 };
 
 // ── Orders ────────────────────────────────────────────
@@ -63,11 +68,11 @@ export const paymentsApi = {
 
 // ── Admin ─────────────────────────────────────────────
 export const adminApi = {
-  getAnalytics:       ()         => api.get('/admin/analytics'),
-  getOrders:          (params)   => api.get('/admin/orders', { params }),
-  updateOrderStatus:  (id, status) => api.patch(`/admin/orders/${id}/status`, { status }),
-  getProducts:        ()         => api.get('/admin/products'),
-  deleteProduct:      (id)       => api.delete(`/admin/products/${id}`),
+  getAnalytics:      ()           => api.get('/admin/analytics'),
+  getOrders:         (params)     => api.get('/admin/orders', { params }),
+  updateOrderStatus: (id, status) => api.patch(`/admin/orders/${id}/status`, { status }),
+  getProducts:       ()           => api.get('/admin/products'),
+  deleteProduct:     (id)         => api.delete(`/admin/products/${id}`),
 };
 
 export default api;

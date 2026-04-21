@@ -1,28 +1,24 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { authApi } from '../../lib/api';
 import { useAuthStore } from '../../lib/store';
 import toast from 'react-hot-toast';
 
-export default function LoginPage() {
-  const [form, setForm] = useState({ email: '', password: '' });
-  const [loading, setLoading] = useState(false);
-  const [googleLoading, setGoogleLoading] = useState(false);
-  const { setAuth } = useAuthStore();
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const redirect = searchParams.get('redirect') || '/';
+function LoginForm() {
+  const [form, setForm]           = useState({ email: '', password: '' });
+  const [loading, setLoading]     = useState(false);
+  const { setAuth }               = useAuthStore();
+  const router                    = useRouter();
+  const searchParams              = useSearchParams();
+  const redirect                  = searchParams.get('redirect') || '/';
 
-  // Load Google Sign-In script
   useEffect(() => {
     const script = document.createElement('script');
     script.src = 'https://accounts.google.com/gsi/client';
-    script.async = true;
-    script.defer = true;
+    script.async = true; script.defer = true;
     document.head.appendChild(script);
-
     script.onload = () => {
       if (window.google && process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID) {
         window.google.accounts.id.initialize({
@@ -31,25 +27,20 @@ export default function LoginPage() {
         });
         window.google.accounts.id.renderButton(
           document.getElementById('google-btn'),
-          { theme: 'outline', size: 'large', width: '100%', text: 'signin_with' }
+          { theme: 'outline', size: 'large', width: 400, text: 'signin_with' }
         );
       }
     };
-    return () => document.head.removeChild(script);
+    return () => { try { document.head.removeChild(script); } catch {} };
   }, []);
 
   const handleGoogleResponse = async (response) => {
-    setGoogleLoading(true);
     try {
       const res = await authApi.googleLogin(response.credential);
       setAuth(res.data.user, res.data.token);
       toast.success(`Welcome, ${res.data.user.name}!`);
       router.push(redirect);
-    } catch {
-      toast.error('Google sign-in failed. Try email login.');
-    } finally {
-      setGoogleLoading(false);
-    }
+    } catch { toast.error('Google sign-in failed. Try email login.'); }
   };
 
   const handleSubmit = async (e) => {
@@ -61,10 +52,14 @@ export default function LoginPage() {
       toast.success(`Welcome back, ${res.data.user.name}!`);
       router.push(redirect);
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Login failed');
-    } finally {
-      setLoading(false);
-    }
+      const data = err.response?.data;
+      if (data?.needsVerification) {
+        toast.error('Please verify your email first.');
+        router.push(`/register?verify=${data.userId}`);
+      } else {
+        toast.error(data?.message || 'Login failed');
+      }
+    } finally { setLoading(false); }
   };
 
   return (
@@ -79,26 +74,22 @@ export default function LoginPage() {
         </div>
 
         <div className="card space-y-4">
-          {/* Google Sign-In Button */}
-          {process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID ? (
-            <div>
-              <div id="google-btn" className="w-full flex justify-center"></div>
-              <div className="flex items-center gap-3 my-4">
+          {process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID && (
+            <>
+              <div id="google-btn" className="w-full flex justify-center" />
+              <div className="flex items-center gap-3">
                 <div className="flex-1 h-px bg-gray-200" />
                 <span className="text-xs text-gray-400 font-medium">OR</span>
                 <div className="flex-1 h-px bg-gray-200" />
               </div>
-            </div>
-          ) : (
-            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 text-xs text-yellow-700">
-              💡 Add <strong>NEXT_PUBLIC_GOOGLE_CLIENT_ID</strong> to <code>.env.local</code> to enable Google Sign-In
-            </div>
+            </>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Email address</label>
-              <input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })}
+              <input type="email" value={form.email}
+                onChange={(e) => setForm({ ...form, email: e.target.value })}
                 className="input-field" placeholder="you@email.com" required />
             </div>
             <div>
@@ -108,7 +99,8 @@ export default function LoginPage() {
                   Forgot password?
                 </Link>
               </div>
-              <input type="password" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })}
+              <input type="password" value={form.password}
+                onChange={(e) => setForm({ ...form, password: e.target.value })}
                 className="input-field" placeholder="••••••••" required />
             </div>
             <button type="submit" disabled={loading} className="btn-primary w-full py-3">
@@ -121,8 +113,18 @@ export default function LoginPage() {
           Don't have an account?{' '}
           <Link href="/register" className="text-red-700 font-semibold hover:underline">Register here</Link>
         </p>
-    
+        <div className="mt-4 p-3 bg-blue-50 rounded-lg text-xs text-blue-700 text-center">
+          <strong>Demo Admin:</strong> admin@dropke.com / Admin@1234
+        </div>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><p>Loading...</p></div>}>
+      <LoginForm />
+    </Suspense>
   );
 }

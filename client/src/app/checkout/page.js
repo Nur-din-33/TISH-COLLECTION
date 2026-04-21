@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Navbar from '../../components/layout/Navbar';
 import Footer from '../../components/layout/Footer';
@@ -8,21 +8,50 @@ import { ordersApi, paymentsApi } from '../../lib/api';
 import toast from 'react-hot-toast';
 
 export default function CheckoutPage() {
+  const router = useRouter();
+
+  // Use state to avoid SSR hydration issues with Zustand
+  const [mounted, setMounted] = useState(false);
   const { items, getTotal, clearCart } = useCartStore();
   const { user } = useAuthStore();
-  const router = useRouter();
-  const total = getTotal();
+  const total = mounted ? getTotal() : 0;
 
   const [form, setForm] = useState({
-    shippingAddress: user?.address || '',
-    shippingCity: user?.city || 'Nairobi',
-    phone: user?.phone || '',
+    shippingAddress: '',
+    shippingCity: 'Nairobi',
+    phone: '',
     notes: '',
   });
-  const [step, setStep] = useState('details'); // details | payment | processing | done
-  const [orderId, setOrderId] = useState(null);
+  const [step, setStep]           = useState('details');
+  const [orderId, setOrderId]     = useState(null);
   const [orderNumber, setOrderNumber] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading]     = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+    if (user) {
+      setForm((f) => ({
+        ...f,
+        phone: user.phone || '',
+        shippingAddress: user.address || '',
+        shippingCity: user.city || 'Nairobi',
+      }));
+    }
+  }, [user]);
+
+  // Redirect if not logged in
+  useEffect(() => {
+    if (mounted && !user) {
+      router.push('/login?redirect=/checkout');
+    }
+  }, [mounted, user, router]);
+
+  // Redirect if cart empty
+  useEffect(() => {
+    if (mounted && items.length === 0 && step !== 'done') {
+      router.push('/cart');
+    }
+  }, [mounted, items, step, router]);
 
   const formatPrice = (n) =>
     new Intl.NumberFormat('en-KE', { style: 'currency', currency: 'KES', minimumFractionDigits: 0 }).format(n);
@@ -56,13 +85,12 @@ export default function CheckoutPage() {
       await paymentsApi.initiateMpesa({ orderId, phone: form.phone });
       toast.success('M-Pesa request sent! Check your phone and enter your PIN.');
 
-      // Poll for payment confirmation every 5 seconds (up to 2 minutes)
       let attempts = 0;
       const interval = setInterval(async () => {
         attempts++;
         if (attempts > 24) {
           clearInterval(interval);
-          toast.error('Payment timeout. Please try again or contact support.');
+          toast.error('Payment timeout. Please try again.');
           setStep('payment');
           setLoading(false);
           return;
@@ -78,16 +106,13 @@ export default function CheckoutPage() {
         } catch {}
       }, 5000);
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Payment failed. Check your M-Pesa credentials.');
+      toast.error(err.response?.data?.message || 'Payment failed.');
       setStep('payment');
       setLoading(false);
     }
   };
 
-  if (items.length === 0 && step !== 'done') {
-    router.push('/cart');
-    return null;
-  }
+  if (!mounted) return null;
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -101,47 +126,28 @@ export default function CheckoutPage() {
             <div className="card space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Phone Number (M-Pesa) *</label>
-                <input
-                  type="tel"
-                  placeholder="e.g. 0712345678"
-                  value={form.phone}
+                <input type="tel" placeholder="e.g. 0712345678" value={form.phone}
                   onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                  className="input-field"
-                  required
-                />
+                  className="input-field" required />
                 <p className="text-xs text-gray-400 mt-1">Payment request will be sent to this number</p>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Delivery Address *</label>
-                <input
-                  type="text"
-                  placeholder="e.g. Tom Mboya St, Apartment 3B"
-                  value={form.shippingAddress}
+                <input type="text" placeholder="e.g. Tom Mboya St, Apartment 3B" value={form.shippingAddress}
                   onChange={(e) => setForm({ ...form, shippingAddress: e.target.value })}
-                  className="input-field"
-                  required
-                />
+                  className="input-field" required />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">City / Town *</label>
-                <input
-                  type="text"
-                  placeholder="e.g. Nairobi"
-                  value={form.shippingCity}
+                <input type="text" placeholder="e.g. Nairobi" value={form.shippingCity}
                   onChange={(e) => setForm({ ...form, shippingCity: e.target.value })}
-                  className="input-field"
-                  required
-                />
+                  className="input-field" required />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Order Notes (optional)</label>
-                <textarea
-                  rows={3}
-                  placeholder="Special instructions for delivery..."
-                  value={form.notes}
+                <textarea rows={3} placeholder="Special delivery instructions..." value={form.notes}
                   onChange={(e) => setForm({ ...form, notes: e.target.value })}
-                  className="input-field resize-none"
-                />
+                  className="input-field resize-none" />
               </div>
             </div>
 
@@ -175,12 +181,12 @@ export default function CheckoutPage() {
               <div className="text-6xl mb-4">📱</div>
               <h2 className="text-xl font-bold text-green-700 mb-2">{formatPrice(total)}</h2>
               <p className="text-gray-600 text-sm mb-6">
-                Click below and we'll send an M-Pesa STK Push to <strong>{form.phone}</strong>. Enter your PIN to complete payment.
+                We'll send an M-Pesa prompt to <strong>{form.phone}</strong>. Enter your PIN to complete.
               </p>
-              <button onClick={handleMpesaPayment} disabled={loading} className="btn-primary w-full py-3 text-base bg-green-700 hover:bg-green-800">
+              <button onClick={handleMpesaPayment} disabled={loading}
+                className="btn-primary w-full py-3 text-base bg-green-700 hover:bg-green-800">
                 {loading ? 'Sending Request...' : '💚 Pay with M-Pesa'}
               </button>
-              <p className="text-xs text-gray-400 mt-3">You will get a prompt on your phone. Enter your M-Pesa PIN to pay.</p>
             </div>
           </div>
         )}
@@ -194,7 +200,8 @@ export default function CheckoutPage() {
             <p className="text-gray-500">Enter your M-Pesa PIN to complete the payment.</p>
             <div className="mt-8 flex justify-center gap-2">
               {[0, 1, 2].map((i) => (
-                <div key={i} className={`w-3 h-3 bg-green-500 rounded-full animate-bounce`} style={{ animationDelay: `${i * 0.15}s` }} />
+                <div key={i} className="w-3 h-3 bg-green-500 rounded-full animate-bounce"
+                  style={{ animationDelay: `${i * 0.15}s` }} />
               ))}
             </div>
           </div>
@@ -206,7 +213,7 @@ export default function CheckoutPage() {
             <div className="text-7xl mb-6">🎉</div>
             <h2 className="text-3xl font-bold text-green-700 mb-3">Payment Confirmed!</h2>
             <p className="text-gray-600 mb-2">Order <strong>#{orderNumber}</strong> is confirmed.</p>
-            <p className="text-gray-500 mb-8">You'll receive an SMS with updates. Thank you for shopping with DropKE!</p>
+            <p className="text-gray-500 mb-8">You'll receive an SMS with updates. Thank you!</p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <a href="/orders" className="btn-primary">Track My Order</a>
               <a href="/products" className="btn-secondary">Continue Shopping</a>
