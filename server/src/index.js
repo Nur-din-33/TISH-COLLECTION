@@ -1,4 +1,5 @@
 require('dotenv').config();
+
 const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
@@ -6,6 +7,7 @@ const http = require('http');
 const { Server } = require('socket.io');
 const rateLimit = require('express-rate-limit');
 
+// Routes
 const authRoutes = require('./routes/auth.routes');
 const productRoutes = require('./routes/product.routes');
 const orderRoutes = require('./routes/order.routes');
@@ -16,28 +18,35 @@ const uploadRoutes = require('./routes/upload.routes');
 const app = express();
 const server = http.createServer(app);
 
-// Socket.io for real-time updates
+// ================= SOCKET.IO =================
 const io = new Server(server, {
   cors: {
-    origin: process.env.CLIENT_URL || 'http://localhost:3000',
-    methods: ['GET', 'POST'],
+    origin: process.env.CLIENT_URL || "*",
+    methods: ["GET", "POST"],
   },
 });
 
 // Make io accessible in routes
 app.set('io', io);
 
-// Middleware
-app.use(cors({ origin: process.env.CLIENT_URL || 'http://localhost:3000', credentials: true }));
+// ================= MIDDLEWARE =================
+app.use(cors({
+  origin: process.env.CLIENT_URL || "*",
+  credentials: true
+}));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan('dev'));
 
-// Rate limiting — prevents abuse
-const limiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 100 });
+// ================= RATE LIMIT =================
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100
+});
 app.use('/api/', limiter);
 
-// Routes
+// ================= ROUTES =================
 app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/orders', orderRoutes);
@@ -45,12 +54,15 @@ app.use('/api/payments', paymentRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/upload', uploadRoutes);
 
-// Health check
+// ================= HEALTH CHECK =================
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'OK', message: 'Dropshipping KE API running' });
+  res.json({
+    status: 'OK',
+    message: 'Tish Collection API running'
+  });
 });
 
-// Socket.io connection handler
+// ================= SOCKET CONNECTION =================
 io.on('connection', (socket) => {
   console.log('Client connected:', socket.id);
 
@@ -64,7 +76,7 @@ io.on('connection', (socket) => {
   });
 });
 
-// Global error handler
+// ================= GLOBAL ERROR HANDLER =================
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(err.status || 500).json({
@@ -73,9 +85,11 @@ app.use((err, req, res, next) => {
   });
 });
 
+// ================= START SERVER =================
 const PORT = process.env.PORT || 5000;
+
 server.listen(PORT, () => {
-  console.log(`\n🚀 Server running on port ${PORT}`);
+  console.log(`🚀 Server running on port ${PORT}`);
   console.log(`📡 WebSocket server ready`);
-  console.log(`🌍 API: http://localhost:${PORT}/api/health\n`);
+  console.log(`🌍 API running`);
 });
