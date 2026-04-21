@@ -113,9 +113,7 @@ function LoginForm() {
           Don't have an account?{' '}
           <Link href="/register" className="text-red-700 font-semibold hover:underline">Register here</Link>
         </p>
-        <div className="mt-4 p-3 bg-blue-50 rounded-lg text-xs text-blue-700 text-center">
-          <strong>Demo Admin:</strong> admin@dropke.com / Admin@1234
-        </div>
+        
       </div>
     </div>
   );
