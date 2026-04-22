@@ -67,8 +67,8 @@ function LoginForm() {
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <Link href="/" className="inline-flex items-center gap-1">
-            <span className="text-4xl font-extrabold text-red-700">Drop</span>
-            <span className="text-4xl font-extrabold text-green-700">KE</span>
+            <span className="text-4xl font-extrabold text-red-700">TISH</span>
+            <span className="text-4xl font-extrabold text-green-700">COLLECTION</span>
           </Link>
           <h1 className="text-2xl font-bold text-gray-900 mt-4">Sign in to your account</h1>
         </div>
