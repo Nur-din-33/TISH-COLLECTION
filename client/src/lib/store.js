@@ -1,7 +1,6 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 
-// Safe localStorage that works during SSR
 const safeStorage = createJSONStorage(() => {
   if (typeof window === 'undefined') {
     return {
@@ -22,24 +21,35 @@ export const useAuthStore = create(
 
       setAuth: (user, token) => {
         const prevUser = get().user;
-
-        // If a DIFFERENT user is logging in — clear the cart first
+        // Clear cart when a different user logs in
         if (prevUser && prevUser.id !== user.id) {
           useCartStore.getState().clearCart();
         }
-
         set({ user, token });
+        // Also save token to localStorage for API interceptor
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('token', token);
+        }
       },
 
       logout: () => {
-        // Clear cart on logout so next user starts fresh
         useCartStore.getState().clearCart();
         set({ user: null, token: null });
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem('token');
+        }
       },
     }),
     {
       name:    'auth-storage',
       storage: safeStorage,
+      // Called after store is hydrated from localStorage
+      onRehydrateStorage: () => (state) => {
+        // Sync token to localStorage so API interceptor can find it
+        if (state?.token && typeof window !== 'undefined') {
+          localStorage.setItem('token', state.token);
+        }
+      },
     }
   )
 );

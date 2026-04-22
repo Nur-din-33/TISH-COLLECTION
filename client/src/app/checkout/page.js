@@ -2,12 +2,13 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Navbar from '../../components/layout/Navbar';
+import AuthGuard from '../../components/layout/AuthGuard';
 import Footer from '../../components/layout/Footer';
 import { useCartStore, useAuthStore } from '../../lib/store';
 import { ordersApi, paymentsApi } from '../../lib/api';
 import toast from 'react-hot-toast';
 
-export default function CheckoutPage() {
+function CheckoutContent() {
   const router = useRouter();
 
   // Use state to avoid SSR hydration issues with Zustand
@@ -38,13 +39,6 @@ export default function CheckoutPage() {
       }));
     }
   }, [user]);
-
-  // Redirect if not logged in
-  useEffect(() => {
-    if (mounted && !user) {
-      router.push('/login?redirect=/checkout');
-    }
-  }, [mounted, user, router]);
 
   // Redirect if cart empty
   useEffect(() => {
@@ -223,5 +217,13 @@ export default function CheckoutPage() {
       </main>
       <Footer />
     </div>
+  );
+}
+
+export default function CheckoutPage() {
+  return (
+    <AuthGuard>
+      <CheckoutContent />
+    </AuthGuard>
   );
 }

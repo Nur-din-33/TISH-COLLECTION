@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Navbar from '../../../components/layout/Navbar';
+import AuthGuard from '../../../components/layout/AuthGuard';
 import { adminApi, productsApi } from '../../../lib/api';
 import { useAuthStore } from '../../../lib/store';
 import toast from 'react-hot-toast';
@@ -11,10 +12,9 @@ const EMPTY_FORM = {
   stock: '', imageUrl: '', categoryId: '', supplierId: '', featured: false, active: true,
 };
 
-export default function AdminProductsPage() {
+function AdminProductsContent() {
   const router = useRouter();
   const { user } = useAuthStore();
-  const [mounted, setMounted]       = useState(false);
   const [products, setProducts]     = useState([]);
   const [categories, setCategories] = useState([]);
   const [suppliers, setSuppliers]   = useState([]);
@@ -25,14 +25,9 @@ export default function AdminProductsPage() {
   const [form, setForm]             = useState(EMPTY_FORM);
   const [search, setSearch]         = useState('');
 
-  useEffect(() => { setMounted(true); }, []);
-
   useEffect(() => {
-    if (!mounted) return;
-    if (!user) { router.push('/login'); return; }
-    if (user.role !== 'ADMIN') { router.push('/'); return; }
     fetchAll();
-  }, [mounted, user]);
+  }, []);
 
   const fetchAll = async () => {
     // Make sure token exists before calling protected API
@@ -119,13 +114,7 @@ export default function AdminProductsPage() {
     p.name.toLowerCase().includes(search.toLowerCase())
   );
 
-  if (!mounted) return (
-    <div className="min-h-screen flex items-center justify-center">
-      <div className="w-10 h-10 border-4 border-red-600 border-t-transparent rounded-full animate-spin" />
-    </div>
-  );
 
-  if (!user || user.role !== 'ADMIN') return null;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -343,5 +332,13 @@ export default function AdminProductsPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function AdminProductsPage() {
+  return (
+    <AuthGuard requireAdmin={true}>
+      <AdminProductsContent />
+    </AuthGuard>
   );
 }

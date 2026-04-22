@@ -4,6 +4,7 @@ import Link from 'next/link';
 import Navbar from '../../components/layout/Navbar';
 import Footer from '../../components/layout/Footer';
 import { ordersApi } from '../../lib/api';
+import AuthGuard from '../../components/layout/AuthGuard';
 import { useSocket } from '../../hooks/useSocket';
 
 const statusColors = {
@@ -15,7 +16,7 @@ const statusColors = {
   CANCELLED: 'bg-red-100 text-red-800',
 };
 
-export default function OrdersPage() {
+function OrdersContent() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -101,5 +102,13 @@ export default function OrdersPage() {
       </main>
       <Footer />
     </div>
+  );
+}
+
+export default function OrdersPage() {
+  return (
+    <AuthGuard>
+      <OrdersContent />
+    </AuthGuard>
   );
 }
