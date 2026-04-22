@@ -1,34 +1,45 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 
+// Safe localStorage that works during SSR
+const safeStorage = createJSONStorage(() => {
+  if (typeof window === 'undefined') {
+    return {
+      getItem:    () => null,
+      setItem:    () => {},
+      removeItem: () => {},
+    };
+  }
+  return localStorage;
+});
+
 // ─── Auth Store ───────────────────────────────────────────────────────────────
 export const useAuthStore = create(
   persist(
-    (set) => ({
-      user: null,
+    (set, get) => ({
+      user:  null,
       token: null,
 
       setAuth: (user, token) => {
+        const prevUser = get().user;
+
+        // If a DIFFERENT user is logging in — clear the cart first
+        if (prevUser && prevUser.id !== user.id) {
+          useCartStore.getState().clearCart();
+        }
+
         set({ user, token });
       },
 
       logout: () => {
+        // Clear cart on logout so next user starts fresh
+        useCartStore.getState().clearCart();
         set({ user: null, token: null });
       },
     }),
     {
-      name: 'auth-storage',
-      storage: createJSONStorage(() => {
-        // Safe storage — returns empty during SSR
-        if (typeof window === 'undefined') {
-          return {
-            getItem: () => null,
-            setItem: () => {},
-            removeItem: () => {},
-          };
-        }
-        return localStorage;
-      }),
+      name:    'auth-storage',
+      storage: safeStorage,
     }
   )
 );
@@ -40,7 +51,7 @@ export const useCartStore = create(
       items: [],
 
       addItem: (product, quantity = 1) => {
-        const items = get().items;
+        const items    = get().items;
         const existing = items.find((i) => i.productId === product.id);
         if (existing) {
           set({
@@ -91,18 +102,8 @@ export const useCartStore = create(
         get().items.reduce((sum, i) => sum + i.quantity, 0),
     }),
     {
-      name: 'cart-storage',
-      storage: createJSONStorage(() => {
-        // Safe storage — returns empty during SSR
-        if (typeof window === 'undefined') {
-          return {
-            getItem: () => null,
-            setItem: () => {},
-            removeItem: () => {},
-          };
-        }
-        return localStorage;
-      }),
+      name:    'cart-storage',
+      storage: safeStorage,
     }
   )
 );

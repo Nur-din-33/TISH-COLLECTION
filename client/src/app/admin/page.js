@@ -19,29 +19,51 @@ const STATUS_COLORS = {
 const ALL_STATUSES = ['PENDING','CONFIRMED','PROCESSING','SHIPPED','DELIVERED','CANCELLED'];
 
 export default function AdminDashboard() {
-  const { user }                    = useAuthStore();
-  const router                      = useRouter();
-  const [analytics, setAnalytics]   = useState(null);
-  const [orders, setOrders]         = useState([]);
-  const [activeTab, setActiveTab]   = useState('dashboard');
-  const [loading, setLoading]       = useState(true);
+  const router                              = useRouter();
+  const { user }                            = useAuthStore();
+  const [mounted, setMounted]               = useState(false);
+  const [analytics, setAnalytics]           = useState(null);
+  const [orders, setOrders]                 = useState([]);
+  const [activeTab, setActiveTab]           = useState('dashboard');
+  const [loading, setLoading]               = useState(true);
   const [realtimeStatus, setRealtimeStatus] = useState('connecting');
 
-  // ── Socket.io (WebSocket layer) ──────────────────────────────────────────
+  // Wait for Zustand to hydrate from localStorage before checking auth
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Only redirect after mounted — avoids false logout during hydration
+  useEffect(() => {
+    if (!mounted) return;
+    if (!user) {
+      router.push('/login');
+      return;
+    }
+    if (user.role !== 'ADMIN') {
+      toast.error('Admin access required');
+      router.push('/');
+      return;
+    }
+    fetchAnalytics();
+    fetchOrders();
+  }, [mounted, user]);
+
+  // Socket.io real-time
   useAdminSocket();
 
   useSocket('order:new', (data) => {
-    toast.success(`🛒 New order #${data.orderNumber} — KES ${data.total?.toFixed(0)} from ${data.customerName}`, { duration: 7000 });
+    toast.success(`🛒 New order #${data.orderNumber} from ${data.customerName}`, { duration: 7000 });
     fetchOrders();
     fetchAnalytics();
   });
 
   useSocket('user:loggedIn', (data) => {
-    toast(`👤 ${data.name} just logged in${data.provider ? ` (${data.provider})` : ''}`, { icon: '🔔', duration: 6000 });
+    toast(`👤 ${data.name} just logged in`, { icon: '🔔', duration: 6000 });
   });
 
   useSocket('user:registered', (data) => {
-    toast.success(`🆕 New signup: ${data.name} (${data.email})`, { duration: 6000 });
+    toast.success(`🆕 New signup: ${data.name}`, { duration: 6000 });
     fetchAnalytics();
   });
 
@@ -49,14 +71,13 @@ export default function AdminDashboard() {
     setOrders((prev) => prev.map((o) => o.id === orderId ? { ...o, status } : o));
   });
 
-  // ── Supabase real-time (direct DB listener) ───────────────────────────────
+  // Supabase real-time
   useEffect(() => {
-    if (!user || user.role !== 'ADMIN') return;
+    if (!mounted || !user || user.role !== 'ADMIN') return;
 
     const orderChannel = subscribeToOrders((payload) => {
       setRealtimeStatus('live');
       if (payload.eventType === 'INSERT') {
-        toast.success(`📦 New order in database!`, { duration: 5000 });
         fetchOrders();
         fetchAnalytics();
       }
@@ -80,32 +101,47 @@ export default function AdminDashboard() {
       unsubscribe(orderChannel);
       unsubscribe(productChannel);
     };
-  }, [user]);
-
-  useEffect(() => {
-    if (!user || user.role !== 'ADMIN') { router.push('/'); return; }
-    fetchAnalytics();
-    fetchOrders();
-  }, [user]);
+  }, [mounted, user]);
 
   const fetchAnalytics = useCallback(async () => {
-    try { const r = await adminApi.getAnalytics(); setAnalytics(r.data.analytics); }
-    catch (e) { console.error(e); }
+    try {
+      const r = await adminApi.getAnalytics();
+      setAnalytics(r.data.analytics);
+    } catch (e) { console.error(e); }
   }, []);
 
   const fetchOrders = useCallback(async () => {
-    try { const r = await adminApi.getOrders({ limit: 50 }); setOrders(r.data.orders); }
-    catch (e) { console.error(e); }
+    try {
+      const r = await adminApi.getOrders({ limit: 50 });
+      setOrders(r.data.orders);
+    } catch (e) { console.error(e); }
     finally { setLoading(false); }
   }, []);
 
   const updateStatus = async (orderId, status) => {
-    try { await adminApi.updateOrderStatus(orderId, status); toast.success('Status updated'); }
-    catch { toast.error('Update failed'); }
+    try {
+      await adminApi.updateOrderStatus(orderId, status);
+      toast.success('Status updated');
+    } catch { toast.error('Update failed'); }
   };
 
   const fmt = (n) =>
     new Intl.NumberFormat('en-KE', { style: 'currency', currency: 'KES', minimumFractionDigits: 0 }).format(n || 0);
+
+  // Show loading spinner while Zustand is hydrating
+  if (!mounted) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-10 h-10 border-4 border-red-600 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
+          <p className="text-gray-500 text-sm">Loading dashboard...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Don't render anything if not admin — redirect is happening
+  if (!user || user.role !== 'ADMIN') return null;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -119,15 +155,20 @@ export default function AdminDashboard() {
             <div className="flex items-center gap-2 mt-1">
               <span className={`w-2 h-2 rounded-full ${realtimeStatus === 'live' ? 'bg-green-500 animate-pulse' : 'bg-yellow-400'}`} />
               <span className="text-xs text-gray-500">
-                {realtimeStatus === 'live' ? 'Supabase real-time connected' : realtimeStatus === 'socket-only' ? 'Socket.io live (add Supabase keys for DB real-time)' : 'Connecting...'}
+                {realtimeStatus === 'live' ? 'Real-time connected' : 'Connecting...'}
               </span>
             </div>
           </div>
           <div className="flex gap-2">
-            {['dashboard','orders'].map((tab) => (
+            <button onClick={() => router.push('/admin/products')}
+              className='px-4 py-2 rounded-lg text-sm font-medium bg-green-700 text-white hover:bg-green-800 transition-colors'>
+              🛍️ Manage Products
+            </button>
+            {['dashboard', 'orders'].map((tab) => (
               <button key={tab} onClick={() => setActiveTab(tab)}
                 className={`px-4 py-2 rounded-lg text-sm font-medium capitalize transition-colors ${
-                  activeTab === tab ? 'bg-gray-900 text-white' : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'}`}>
+                  activeTab === tab ? 'bg-gray-900 text-white' : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'
+                }`}>
                 {tab}
               </button>
             ))}
@@ -139,10 +180,10 @@ export default function AdminDashboard() {
           <>
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
               {[
-                { label: 'Total Orders',  value: analytics.totalOrders,              icon: '📦', color: 'text-blue-600'   },
-                { label: 'Revenue',       value: fmt(analytics.totalRevenue),         icon: '💰', color: 'text-green-600'  },
-                { label: 'Products',      value: analytics.totalProducts,             icon: '🛍️', color: 'text-purple-600' },
-                { label: 'Customers',     value: analytics.totalUsers,                icon: '👥', color: 'text-orange-600' },
+                { label: 'Total Orders',  value: analytics.totalOrders,         icon: '📦', color: 'text-blue-600'   },
+                { label: 'Revenue',       value: fmt(analytics.totalRevenue),    icon: '💰', color: 'text-green-600'  },
+                { label: 'Products',      value: analytics.totalProducts,        icon: '🛍️', color: 'text-purple-600' },
+                { label: 'Customers',     value: analytics.totalUsers,           icon: '👥', color: 'text-orange-600' },
               ].map((s) => (
                 <div key={s.label} className="card">
                   <div className="text-2xl mb-1">{s.icon}</div>
@@ -152,7 +193,6 @@ export default function AdminDashboard() {
               ))}
             </div>
 
-            {/* Order status breakdown */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
               <div className="card">
                 <h2 className="text-base font-bold text-gray-900 mb-4">Orders by Status</h2>
@@ -168,12 +208,12 @@ export default function AdminDashboard() {
 
               <div className="card">
                 <h2 className="text-base font-bold text-gray-900 mb-4">Recent Orders</h2>
-                <div className="space-y-2.5">
+                <div className="space-y-3">
                   {analytics.recentOrders.map((o) => (
                     <div key={o.id} className="flex items-center justify-between text-sm">
                       <div>
                         <span className="font-mono text-xs text-gray-500">{o.orderNumber}</span>
-                        <p className="font-medium text-gray-800">{o.user.name}</p>
+                        <p className="font-medium text-gray-800">{o.user?.name}</p>
                       </div>
                       <div className="text-right">
                         <p className="font-bold text-red-700">{fmt(o.totalAmount)}</p>
@@ -192,13 +232,17 @@ export default function AdminDashboard() {
           <div className="card">
             <h2 className="text-lg font-bold text-gray-900 mb-4">All Orders ({orders.length})</h2>
             {loading ? (
-              <div className="space-y-3">{[...Array(5)].map((_, i) => <div key={i} className="h-16 bg-gray-100 rounded-lg animate-pulse" />)}</div>
+              <div className="space-y-3">
+                {[...Array(5)].map((_, i) => <div key={i} className="h-16 bg-gray-100 rounded-lg animate-pulse" />)}
+              </div>
+            ) : orders.length === 0 ? (
+              <div className="text-center py-10 text-gray-400">No orders yet</div>
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b border-gray-100 text-left">
-                      {['Order #','Customer','Phone','Amount','Payment','Status','Update'].map((h) => (
+                      {['Order #', 'Customer', 'Phone', 'Amount', 'Payment', 'Status', 'Update'].map((h) => (
                         <th key={h} className="py-2 pr-4 text-gray-500 font-medium whitespace-nowrap">{h}</th>
                       ))}
                     </tr>
@@ -214,12 +258,16 @@ export default function AdminDashboard() {
                         <td className="py-3 pr-4 text-xs text-gray-600">{order.user?.phone || '—'}</td>
                         <td className="py-3 pr-4 font-bold text-red-700 whitespace-nowrap">{fmt(order.totalAmount)}</td>
                         <td className="py-3 pr-4">
-                          <span className={`text-xs px-1.5 py-0.5 rounded font-medium whitespace-nowrap ${order.payment?.status === 'COMPLETED' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>
+                          <span className={`text-xs px-1.5 py-0.5 rounded font-medium whitespace-nowrap ${
+                            order.payment?.status === 'COMPLETED' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'
+                          }`}>
                             {order.payment?.status || 'NONE'}
                           </span>
                         </td>
                         <td className="py-3 pr-4">
-                          <span className={`text-xs font-semibold px-2 py-0.5 rounded-full whitespace-nowrap ${STATUS_COLORS[order.status]}`}>{order.status}</span>
+                          <span className={`text-xs font-semibold px-2 py-0.5 rounded-full whitespace-nowrap ${STATUS_COLORS[order.status]}`}>
+                            {order.status}
+                          </span>
                         </td>
                         <td className="py-3">
                           <select value={order.status} onChange={(e) => updateStatus(order.id, e.target.value)}
