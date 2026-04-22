@@ -35,22 +35,22 @@ export default function AdminProductsPage() {
   }, [mounted, user]);
 
   const fetchAll = async () => {
+    // Make sure token exists before calling protected API
+    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+    if (!token) {
+      toast.error('Session expired. Please log in again.');
+      router.push('/login');
+      return;
+    }
     try {
-      const [prodRes, catRes] = await Promise.all([
+      const [prodRes, catRes, suppRes] = await Promise.all([
         adminApi.getProducts(),
         productsApi.getCategories(),
+        adminApi.getSuppliers(),
       ]);
       setProducts(prodRes.data.products);
       setCategories(catRes.data.categories);
-      const seen = new Set();
-      const uniqueSuppliers = [];
-      prodRes.data.products.forEach((p) => {
-        if (p.supplier && !seen.has(p.supplier.id)) {
-          seen.add(p.supplier.id);
-          uniqueSuppliers.push(p.supplier);
-        }
-      });
-      setSuppliers(uniqueSuppliers);
+      setSuppliers(suppRes.data.suppliers || []);
     } catch { toast.error('Failed to load products'); }
     finally { setLoading(false); }
   };
@@ -73,7 +73,7 @@ export default function AdminProductsPage() {
         price:      parseFloat(form.price),
         costPrice:  parseFloat(form.costPrice),
         stock:      parseInt(form.stock),
-        supplierId: suppliers[0]?.id || form.supplierId,
+        supplierId: form.supplierId || suppliers[0]?.id || '',
       };
       if (editingId) {
         await productsApi.update(editingId, data);
@@ -194,6 +194,16 @@ export default function AdminProductsPage() {
                     <option value="">Select a category</option>
                     {categories.map((c) => (
                       <option key={c.id} value={c.id}>{c.name}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Supplier *</label>
+                  <select value={form.supplierId} onChange={(e) => setForm({ ...form, supplierId: e.target.value })}
+                    className="input-field" required>
+                    <option value="">Select a supplier</option>
+                    {suppliers.map((s) => (
+                      <option key={s.id} value={s.id}>{s.name}</option>
                     ))}
                   </select>
                 </div>

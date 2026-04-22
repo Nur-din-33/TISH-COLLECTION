@@ -117,3 +117,16 @@ router.delete('/products/:id', async (req, res) => {
 });
 
 module.exports = router;
+
+// GET /api/admin/suppliers — get all suppliers
+router.get('/suppliers', async (req, res) => {
+  try {
+    const suppliers = await prisma.supplier.findMany({
+      where: { active: true },
+      select: { id: true, name: true },
+    });
+    res.json({ success: true, suppliers });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Failed to fetch suppliers' });
+  }
+});

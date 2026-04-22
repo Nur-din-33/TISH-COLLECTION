@@ -4,72 +4,47 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
 
 const api = axios.create({
   baseURL: `${API_URL}/api`,
-  headers: {
-    'Content-Type': 'application/json',
-  },
+  headers: { 'Content-Type': 'application/json' },
 });
 
-// ================= REQUEST INTERCEPTOR =================
-api.interceptors.request.use(
-  (config) => {
-    if (typeof window !== 'undefined') {
-      try {
-        const token = localStorage.getItem('token');
+// Attach JWT token to every request automatically
+api.interceptors.request.use((config) => {
+  if (typeof window !== 'undefined') {
+    const token = localStorage.getItem('token');
+    if (token) config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
 
-        if (token && token !== "undefined" && token !== "null") {
-          config.headers.Authorization = `Bearer ${token}`;
-        }
-      } catch (err) {
-        console.error("Token read error:", err);
-      }
-    }
-    return config;
-  },
-  (error) => Promise.reject(error)
-);
-
-// ================= RESPONSE INTERCEPTOR =================
+// Handle 401 errors — redirect to login
 api.interceptors.response.use(
-  (response) => response,
+  (r) => r,
   (error) => {
-    if (typeof window !== 'undefined') {
-      const status = error.response?.status;
-
-      // Only logout on real unauthorized
-      if (status === 401) {
-        const token = localStorage.getItem('token');
-
-        if (token) {
-          console.warn('Session expired. Logging out...');
-
-          localStorage.removeItem('token');
-          localStorage.removeItem('user');
-
-          // small delay avoids redirect loop
-          setTimeout(() => {
-            window.location.href = '/login';
-          }, 100);
-        }
+    if (typeof window !== 'undefined' && error.response?.status === 401) {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      // Use Next.js router instead of window.location to avoid SSR issues
+      if (typeof window !== 'undefined') {
+        window.location.href = '/login';
       }
     }
-
     return Promise.reject(error);
   }
 );
 
-// ================= AUTH =================
+// ── Auth ──────────────────────────────────────────────
 export const authApi = {
-  register:       (data)       => api.post('/auth/register', data),
-  verifyEmail:    (data)       => api.post('/auth/verify-email', data),
-  resendCode:     (userId)     => api.post('/auth/resend-code', { userId }),
-  login:          (data)       => api.post('/auth/login', data),
-  googleLogin:    (credential) => api.post('/auth/google', { credential }),
-  forgotPassword: (email)      => api.post('/auth/forgot-password', { email }),
-  resetPassword:  (data)       => api.post('/auth/reset-password', data),
-  me:             ()           => api.get('/auth/me'),
+  register:      (data)       => api.post('/auth/register', data),
+  verifyEmail:   (data)       => api.post('/auth/verify-email', data),
+  resendCode:    (userId)     => api.post('/auth/resend-code', { userId }),
+  login:         (data)       => api.post('/auth/login', data),
+  googleLogin:   (credential) => api.post('/auth/google', { credential }),
+  forgotPassword:(email)      => api.post('/auth/forgot-password', { email }),
+  resetPassword: (data)       => api.post('/auth/reset-password', data),
+  me:            ()           => api.get('/auth/me'),
 };
 
-// ================= PRODUCTS =================
+// ── Products ──────────────────────────────────────────
 export const productsApi = {
   getAll:        (params)     => api.get('/products', { params }),
   getOne:        (slug)       => api.get(`/products/${slug}`),
@@ -78,26 +53,27 @@ export const productsApi = {
   update:        (id, data)   => api.patch(`/products/${id}`, data),
 };
 
-// ================= ORDERS =================
+// ── Orders ────────────────────────────────────────────
 export const ordersApi = {
   create: (data) => api.post('/orders', data),
   getAll: ()     => api.get('/orders'),
   getOne: (id)   => api.get(`/orders/${id}`),
 };
 
-// ================= PAYMENTS =================
+// ── Payments ──────────────────────────────────────────
 export const paymentsApi = {
   initiateMpesa: (data) => api.post('/payments/mpesa/initiate', data),
   checkStatus:   (id)   => api.get(`/payments/mpesa/status/${id}`),
 };
 
-// ================= ADMIN =================
+// ── Admin ─────────────────────────────────────────────
 export const adminApi = {
-  getAnalytics:      ()             => api.get('/admin/analytics'),
-  getOrders:         (params)       => api.get('/admin/orders', { params }),
-  updateOrderStatus: (id, status)   => api.patch(`/admin/orders/${id}/status`, { status }),
-  getProducts:       ()             => api.get('/admin/products'),
-  deleteProduct:     (id)           => api.delete(`/admin/products/${id}`),
+  getAnalytics:      ()           => api.get('/admin/analytics'),
+  getOrders:         (params)     => api.get('/admin/orders', { params }),
+  updateOrderStatus: (id, status) => api.patch(`/admin/orders/${id}/status`, { status }),
+  getProducts:       ()           => api.get('/admin/products'),
+  getSuppliers:      ()           => api.get('/admin/suppliers'),
+  deleteProduct:     (id)         => api.delete(`/admin/products/${id}`),
 };
 
 export default api;
