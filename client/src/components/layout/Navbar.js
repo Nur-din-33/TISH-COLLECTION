@@ -25,11 +25,17 @@ export default function Navbar({ transparent = false }) {
   useEffect(() => {
     setMounted(true);
     const handleScroll = () => setScrolled(window.scrollY > 50);
+    handleScroll();
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  if (!mounted) return <div className="h-16" />;
+  if (!mounted) return (
+    <>
+      <div className="h-8" />
+      <div className="h-16 md:h-20" />
+    </>
+  );
 
   const handleSearch = (e) => {
     e.preventDefault();
