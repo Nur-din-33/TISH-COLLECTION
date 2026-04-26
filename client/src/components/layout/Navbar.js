@@ -57,7 +57,7 @@ export default function Navbar({ transparent = false }) {
   return (
     <>
       {/* Announcement bar */}
-      <div className={`text-center text-xs font-semibold py-2 px-4 tracking-wider uppercase transition-all duration-300 ${
+      <div className={`text-center text-xs font-semibold py-2 px-4 tracking-wider uppercase transition-all duration-300 relative z-40 ${
         isTransparent
           ? 'bg-white/10 text-white/80 backdrop-blur-sm'
           : 'bg-surface-900 text-white'
