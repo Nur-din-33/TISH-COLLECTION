@@ -33,7 +33,7 @@ export default function Navbar({ transparent = false }) {
   if (!mounted) return (
     <>
       <div className="h-8" />
-      <div className="h-16 md:h-20" />
+      {!transparent && <div className="h-16 md:h-20" />}
     </>
   );
 
