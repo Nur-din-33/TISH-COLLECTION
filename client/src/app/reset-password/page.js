@@ -29,11 +29,13 @@ function ResetPasswordForm() {
 
   if (!token) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
+      <div className="min-h-screen flex items-center justify-center bg-surface-50 px-4">
         <div className="card text-center max-w-md w-full">
-          <p className="text-4xl mb-3">❌</p>
-          <h2 className="text-xl font-bold text-gray-800 mb-2">Invalid Reset Link</h2>
-          <p className="text-gray-500 text-sm mb-4">Please request a new one.</p>
+          <div className="w-14 h-14 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4">
+            <span className="text-red-500 text-xl font-bold">!</span>
+          </div>
+          <h2 className="text-lg font-bold text-surface-900 mb-2">Invalid Reset Link</h2>
+          <p className="text-surface-500 text-sm mb-5">Please request a new one.</p>
           <Link href="/forgot-password" className="btn-primary inline-block">Request New Link</Link>
         </div>
       </div>
@@ -41,28 +43,33 @@ function ResetPasswordForm() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-      <div className="w-full max-w-md">
+    <div className="min-h-screen flex items-center justify-center bg-surface-50 px-4">
+      <div className="w-full max-w-md animate-fade-in">
         <div className="text-center mb-8">
-          <Link href="/"><span className="text-4xl font-extrabold text-red-700">Drop</span><span className="text-4xl font-extrabold text-green-700">KE</span></Link>
-          <h1 className="text-2xl font-bold text-gray-900 mt-4">Set New Password</h1>
+          <Link href="/" className="inline-flex items-center gap-1.5">
+            <span className="text-3xl font-bold text-surface-900">TISH</span>
+            <span className="text-3xl font-bold text-brand-500">COLLECTION</span>
+          </Link>
+          <h1 className="text-xl font-bold text-surface-900 mt-5">Set New Password</h1>
         </div>
         {done ? (
           <div className="card text-center">
-            <div className="text-5xl mb-4">✅</div>
-            <h2 className="text-xl font-bold text-green-700 mb-2">Password Reset!</h2>
-            <p className="text-gray-500 text-sm mb-5">Your password has been updated.</p>
-            <Link href="/login" className="btn-primary inline-block">Go to Login</Link>
+            <div className="w-14 h-14 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-4">
+              <span className="text-green-600 text-xl font-bold">&#10003;</span>
+            </div>
+            <h2 className="text-lg font-bold text-surface-900 mb-2">Password Reset</h2>
+            <p className="text-surface-500 text-sm mb-5">Your password has been updated.</p>
+            <Link href="/login" className="btn-primary inline-block">Go to Sign In</Link>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="card space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">New Password</label>
+              <label className="block text-sm font-medium text-surface-700 mb-1.5">New Password</label>
               <input type="password" value={password} onChange={(e) => setPassword(e.target.value)}
                 className="input-field" placeholder="Min. 6 characters" required minLength={6} />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Confirm Password</label>
+              <label className="block text-sm font-medium text-surface-700 mb-1.5">Confirm Password</label>
               <input type="password" value={confirm} onChange={(e) => setConfirm(e.target.value)}
                 className="input-field" placeholder="Repeat your password" required minLength={6} />
             </div>
@@ -78,7 +85,7 @@ function ResetPasswordForm() {
 
 export default function ResetPasswordPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><p>Loading...</p></div>}>
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><div className="w-8 h-8 border-2 border-surface-200 border-t-surface-900 rounded-full animate-spin" /></div>}>
       <ResetPasswordForm />
     </Suspense>
   );

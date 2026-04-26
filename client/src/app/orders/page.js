@@ -8,12 +8,12 @@ import AuthGuard from '../../components/layout/AuthGuard';
 import { useSocket } from '../../hooks/useSocket';
 
 const statusColors = {
-  PENDING: 'bg-yellow-100 text-yellow-800',
-  CONFIRMED: 'bg-blue-100 text-blue-800',
-  PROCESSING: 'bg-purple-100 text-purple-800',
-  SHIPPED: 'bg-indigo-100 text-indigo-800',
-  DELIVERED: 'bg-green-100 text-green-800',
-  CANCELLED: 'bg-red-100 text-red-800',
+  PENDING: 'bg-amber-50 text-amber-700 border border-amber-200',
+  CONFIRMED: 'bg-blue-50 text-blue-700 border border-blue-200',
+  PROCESSING: 'bg-purple-50 text-purple-700 border border-purple-200',
+  SHIPPED: 'bg-indigo-50 text-indigo-700 border border-indigo-200',
+  DELIVERED: 'bg-green-50 text-green-700 border border-green-200',
+  CANCELLED: 'bg-red-50 text-red-700 border border-red-200',
 };
 
 function OrdersContent() {
@@ -29,7 +29,6 @@ function OrdersContent() {
 
   useEffect(() => { fetchOrders(); }, []);
 
-  // Real-time: update order status without page refresh
   useSocket('order:statusUpdated', ({ orderId, status }) => {
     setOrders((prev) =>
       prev.map((o) => (o.id === orderId ? { ...o, status } : o))
@@ -43,7 +42,7 @@ function OrdersContent() {
     <div className="min-h-screen flex flex-col">
       <Navbar />
       <main className="flex-1 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full">
-        <h1 className="text-2xl font-bold text-gray-900 mb-6">My Orders</h1>
+        <h1 className="text-2xl font-bold text-surface-900 mb-8 tracking-tight">My Orders</h1>
 
         {loading ? (
           <div className="space-y-4">
@@ -52,42 +51,44 @@ function OrdersContent() {
             ))}
           </div>
         ) : orders.length === 0 ? (
-          <div className="text-center py-16">
-            <p className="text-5xl mb-4">📦</p>
-            <h2 className="text-xl font-bold text-gray-700">No orders yet</h2>
-            <p className="text-gray-500 mt-2">Your orders will appear here once you shop.</p>
+          <div className="text-center py-20">
+            <div className="w-16 h-16 bg-surface-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <span className="text-surface-300 text-xl">0</span>
+            </div>
+            <h2 className="text-lg font-bold text-surface-700">No orders yet</h2>
+            <p className="text-surface-500 mt-2 text-sm">Your orders will appear here once you shop.</p>
             <Link href="/products" className="btn-primary mt-5 inline-block">Shop Now</Link>
           </div>
         ) : (
           <div className="space-y-4">
             {orders.map((order) => (
-              <div key={order.id} className="card">
+              <div key={order.id} className="card hover:shadow-elegant transition-all duration-300">
                 <div className="flex flex-wrap items-start justify-between gap-3 mb-3">
                   <div>
-                    <p className="font-bold text-gray-800">Order #{order.orderNumber}</p>
-                    <p className="text-xs text-gray-400 mt-0.5">
+                    <p className="font-bold text-surface-900">Order #{order.orderNumber}</p>
+                    <p className="text-xs text-surface-400 mt-1">
                       {new Date(order.createdAt).toLocaleDateString('en-KE', { day: 'numeric', month: 'long', year: 'numeric' })}
                     </p>
                   </div>
                   <div className="flex items-center gap-3">
-                    <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${statusColors[order.status]}`}>
+                    <span className={`text-[11px] font-semibold px-2.5 py-1 rounded-lg ${statusColors[order.status]}`}>
                       {order.status}
                     </span>
-                    <span className="font-bold text-red-700">{formatPrice(order.totalAmount)}</span>
+                    <span className="font-bold text-surface-900">{formatPrice(order.totalAmount)}</span>
                   </div>
                 </div>
 
                 <div className="flex flex-wrap gap-2">
                   {order.items.map((item) => (
-                    <span key={item.id} className="text-xs bg-gray-100 text-gray-700 px-2.5 py-1 rounded-full">
-                      {item.product.name} × {item.quantity}
+                    <span key={item.id} className="text-xs bg-surface-50 text-surface-600 px-3 py-1.5 rounded-lg border border-surface-100">
+                      {item.product.name} x {item.quantity}
                     </span>
                   ))}
                 </div>
 
                 {order.payment && (
-                  <div className="mt-3 pt-3 border-t border-gray-100 flex items-center gap-2 text-xs text-gray-500">
-                    <span className={`font-medium px-2 py-0.5 rounded-full ${order.payment.status === 'COMPLETED' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>
+                  <div className="mt-3 pt-3 border-t border-surface-100 flex items-center gap-2 text-xs text-surface-500">
+                    <span className={`font-medium px-2 py-0.5 rounded-lg ${order.payment.status === 'COMPLETED' ? 'bg-green-50 text-green-700' : 'bg-amber-50 text-amber-700'}`}>
                       {order.payment.method}: {order.payment.status}
                     </span>
                     {order.payment.mpesaReceiptNumber && (

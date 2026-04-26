@@ -63,45 +63,46 @@ function LoginForm() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-      <div className="w-full max-w-md">
+    <div className="min-h-screen flex items-center justify-center bg-surface-50 px-4">
+      <div className="w-full max-w-md animate-fade-in">
         <div className="text-center mb-8">
-          <Link href="/" className="inline-flex items-center gap-1">
-            <span className="text-4xl font-extrabold text-red-700">TISH</span>
-            <span className="text-4xl font-extrabold text-green-700">COLLECTION</span>
+          <Link href="/" className="inline-flex items-center gap-1.5">
+            <span className="text-3xl font-bold text-surface-900">TISH</span>
+            <span className="text-3xl font-bold text-brand-500">COLLECTION</span>
           </Link>
-          <h1 className="text-2xl font-bold text-gray-900 mt-4">Sign in to your account</h1>
+          <h1 className="text-xl font-bold text-surface-900 mt-5">Welcome back</h1>
+          <p className="text-surface-500 text-sm mt-1">Sign in to your account</p>
         </div>
 
-        <div className="card space-y-4">
+        <div className="card space-y-5">
           {process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID && (
             <>
               <div id="google-btn" className="w-full flex justify-center" />
               <div className="flex items-center gap-3">
-                <div className="flex-1 h-px bg-gray-200" />
-                <span className="text-xs text-gray-400 font-medium">OR</span>
-                <div className="flex-1 h-px bg-gray-200" />
+                <div className="flex-1 h-px bg-surface-200" />
+                <span className="text-xs text-surface-400 font-medium">OR</span>
+                <div className="flex-1 h-px bg-surface-200" />
               </div>
             </>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Email address</label>
+              <label className="block text-sm font-medium text-surface-700 mb-1.5">Email address</label>
               <input type="email" value={form.email}
                 onChange={(e) => setForm({ ...form, email: e.target.value })}
                 className="input-field" placeholder="you@email.com" required />
             </div>
             <div>
-              <div className="flex justify-between items-center mb-1">
-                <label className="block text-sm font-medium text-gray-700">Password</label>
-                <Link href="/forgot-password" className="text-xs text-red-600 hover:underline font-medium">
+              <div className="flex justify-between items-center mb-1.5">
+                <label className="block text-sm font-medium text-surface-700">Password</label>
+                <Link href="/forgot-password" className="text-xs text-brand-600 hover:text-brand-700 font-medium transition-colors">
                   Forgot password?
                 </Link>
               </div>
               <input type="password" value={form.password}
                 onChange={(e) => setForm({ ...form, password: e.target.value })}
-                className="input-field" placeholder="••••••••" required />
+                className="input-field" placeholder="Enter your password" required />
             </div>
             <button type="submit" disabled={loading} className="btn-primary w-full py-3">
               {loading ? 'Signing in...' : 'Sign In'}
@@ -109,11 +110,10 @@ function LoginForm() {
           </form>
         </div>
 
-        <p className="text-center text-sm text-gray-600 mt-5">
-          Don't have an account?{' '}
-          <Link href="/register" className="text-red-700 font-semibold hover:underline">Register here</Link>
+        <p className="text-center text-sm text-surface-500 mt-6">
+          Don&apos;t have an account?{' '}
+          <Link href="/register" className="text-surface-900 font-semibold hover:text-brand-600 transition-colors">Register here</Link>
         </p>
-        
       </div>
     </div>
   );
@@ -121,7 +121,7 @@ function LoginForm() {
 
 export default function LoginPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><p>Loading...</p></div>}>
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><div className="w-8 h-8 border-2 border-surface-200 border-t-surface-900 rounded-full animate-spin" /></div>}>
       <LoginForm />
     </Suspense>
   );

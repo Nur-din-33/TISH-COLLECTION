@@ -8,16 +8,58 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        // Kenya flag-inspired brand colors
         brand: {
-          red: '#bb0000',
-          green: '#006600',
-          black: '#000000',
-          50: '#fff5f5',
-          100: '#fee2e2',
-          600: '#bb0000',
-          700: '#9b0000',
-          800: '#7b0000',
+          50:  '#fdf8f3',
+          100: '#faecd9',
+          200: '#f4d5a8',
+          300: '#e8b96e',
+          400: '#d4a574',
+          500: '#c9963a',
+          600: '#b07d2a',
+          700: '#8f6422',
+          800: '#6e4d1c',
+          900: '#4d3614',
+          950: '#2a1d0b',
+        },
+        surface: {
+          50:  '#fafafa',
+          100: '#f5f5f5',
+          200: '#e5e5e5',
+          300: '#d4d4d4',
+          400: '#a3a3a3',
+          500: '#737373',
+          600: '#525252',
+          700: '#404040',
+          800: '#262626',
+          900: '#171717',
+          950: '#0a0a0a',
+        },
+      },
+      fontFamily: {
+        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+        display: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+      },
+      boxShadow: {
+        'soft': '0 2px 15px -3px rgba(0, 0, 0, 0.07), 0 10px 20px -2px rgba(0, 0, 0, 0.04)',
+        'elegant': '0 4px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 30px -5px rgba(0, 0, 0, 0.05)',
+        'glow': '0 0 30px rgba(201, 150, 58, 0.15)',
+      },
+      borderRadius: {
+        '2xl': '1rem',
+        '3xl': '1.5rem',
+      },
+      animation: {
+        'fade-in': 'fadeIn 0.5s ease-out',
+        'slide-up': 'slideUp 0.5s ease-out',
+      },
+      keyframes: {
+        fadeIn: {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
+        },
+        slideUp: {
+          '0%': { opacity: '0', transform: 'translateY(10px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
         },
       },
     },
