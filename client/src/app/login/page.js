@@ -63,57 +63,77 @@ function LoginForm() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-surface-50 px-4">
-      <div className="w-full max-w-md animate-fade-in">
-        <div className="text-center mb-8">
-          <Link href="/" className="inline-flex items-center gap-1.5">
-            <span className="text-3xl font-bold text-surface-900">TISH</span>
-            <span className="text-3xl font-bold text-brand-500">COLLECTION</span>
+    <div className="min-h-screen flex">
+      {/* Left side — brand panel */}
+      <div className="hidden lg:flex lg:w-1/2 bg-surface-950 items-center justify-center p-12 relative overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-brand-500/10 via-transparent to-transparent" />
+        <div className="relative text-center">
+          <Link href="/" className="inline-flex items-center gap-2 mb-8">
+            <span className="text-4xl font-black text-white tracking-tight">TISH</span>
+            <span className="text-4xl font-black text-brand-400 tracking-tight">COLLECTION</span>
           </Link>
-          <h1 className="text-xl font-bold text-surface-900 mt-5">Welcome back</h1>
-          <p className="text-surface-500 text-sm mt-1">Sign in to your account</p>
+          <p className="text-surface-400 text-lg max-w-sm mx-auto leading-relaxed">
+            Premium shopping experience with fast delivery across Kenya.
+          </p>
         </div>
+      </div>
 
-        <div className="card space-y-5">
-          {process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID && (
-            <>
-              <div id="google-btn" className="w-full flex justify-center" />
-              <div className="flex items-center gap-3">
-                <div className="flex-1 h-px bg-surface-200" />
-                <span className="text-xs text-surface-400 font-medium">OR</span>
-                <div className="flex-1 h-px bg-surface-200" />
-              </div>
-            </>
-          )}
+      {/* Right side — form */}
+      <div className="flex-1 flex items-center justify-center bg-white px-6">
+        <div className="w-full max-w-md animate-fade-in">
+          <div className="lg:hidden text-center mb-10">
+            <Link href="/" className="inline-flex items-center gap-1.5">
+              <span className="text-3xl font-black text-surface-900">TISH</span>
+              <span className="text-3xl font-black text-brand-500">COLLECTION</span>
+            </Link>
+          </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-surface-700 mb-1.5">Email address</label>
-              <input type="email" value={form.email}
-                onChange={(e) => setForm({ ...form, email: e.target.value })}
-                className="input-field" placeholder="you@email.com" required />
-            </div>
-            <div>
-              <div className="flex justify-between items-center mb-1.5">
-                <label className="block text-sm font-medium text-surface-700">Password</label>
-                <Link href="/forgot-password" className="text-xs text-brand-600 hover:text-brand-700 font-medium transition-colors">
-                  Forgot password?
-                </Link>
+          <div className="mb-8">
+            <h1 className="text-3xl font-black text-surface-900 uppercase tracking-tight">Welcome back</h1>
+            <p className="text-surface-500 text-sm mt-2">Sign in to your account to continue shopping</p>
+          </div>
+
+          <div className="space-y-6">
+            {process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID && (
+              <>
+                <div id="google-btn" className="w-full flex justify-center" />
+                <div className="flex items-center gap-3">
+                  <div className="flex-1 h-px bg-surface-200" />
+                  <span className="text-xs text-surface-400 font-bold uppercase tracking-wider">Or</span>
+                  <div className="flex-1 h-px bg-surface-200" />
+                </div>
+              </>
+            )}
+
+            <form onSubmit={handleSubmit} className="space-y-5">
+              <div>
+                <label className="block text-xs font-bold text-surface-700 mb-2 uppercase tracking-wider">Email</label>
+                <input type="email" value={form.email}
+                  onChange={(e) => setForm({ ...form, email: e.target.value })}
+                  className="input-field" placeholder="you@email.com" required />
               </div>
-              <input type="password" value={form.password}
-                onChange={(e) => setForm({ ...form, password: e.target.value })}
-                className="input-field" placeholder="Enter your password" required />
-            </div>
-            <button type="submit" disabled={loading} className="btn-primary w-full py-3">
-              {loading ? 'Signing in...' : 'Sign In'}
-            </button>
-          </form>
+              <div>
+                <div className="flex justify-between items-center mb-2">
+                  <label className="block text-xs font-bold text-surface-700 uppercase tracking-wider">Password</label>
+                  <Link href="/forgot-password" className="text-xs text-brand-600 hover:text-brand-700 font-semibold transition-colors">
+                    Forgot password?
+                  </Link>
+                </div>
+                <input type="password" value={form.password}
+                  onChange={(e) => setForm({ ...form, password: e.target.value })}
+                  className="input-field" placeholder="Enter your password" required />
+              </div>
+              <button type="submit" disabled={loading} className="w-full bg-surface-900 text-white font-bold py-3.5 rounded-full uppercase tracking-wider text-sm hover:bg-surface-800 transition-all disabled:opacity-50">
+                {loading ? 'Signing in...' : 'Sign In'}
+              </button>
+            </form>
+          </div>
+
+          <p className="text-center text-sm text-surface-500 mt-8">
+            Don&apos;t have an account?{' '}
+            <Link href="/register" className="text-surface-900 font-bold hover:text-brand-600 transition-colors">Register here</Link>
+          </p>
         </div>
-
-        <p className="text-center text-sm text-surface-500 mt-6">
-          Don&apos;t have an account?{' '}
-          <Link href="/register" className="text-surface-900 font-semibold hover:text-brand-600 transition-colors">Register here</Link>
-        </p>
       </div>
     </div>
   );
