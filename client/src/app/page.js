@@ -71,7 +71,7 @@ export default function HomePage() {
       <Navbar transparent />
 
       {/* ===== HERO — Full viewport, bold imagery ===== */}
-      <section className="relative min-h-screen flex items-center justify-center bg-surface-950 text-white overflow-hidden -mt-28">
+      <section className="relative min-h-screen flex items-center justify-center bg-surface-950 text-white overflow-hidden -mt-28 pt-28">
         {/* Background layers */}
         <div className="absolute inset-0 bg-gradient-to-b from-surface-950 via-surface-900 to-surface-950" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-brand-500/10 via-transparent to-transparent" />
