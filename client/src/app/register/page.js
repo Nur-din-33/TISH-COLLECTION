@@ -7,7 +7,7 @@ import { useAuthStore } from '../../lib/store';
 import toast from 'react-hot-toast';
 
 export default function RegisterPage() {
-  const [step, setStep]   = useState('form');   // 'form' | 'verify'
+  const [step, setStep]   = useState('form');
   const [userId, setUserId] = useState(null);
   const [code, setCode]   = useState('');
   const [resending, setResending] = useState(false);
@@ -18,7 +18,6 @@ export default function RegisterPage() {
   const { setAuth } = useAuthStore();
   const router = useRouter();
 
-  // Load Google script
   useEffect(() => {
     const script = document.createElement('script');
     script.src = 'https://accounts.google.com/gsi/client';
@@ -37,7 +36,7 @@ export default function RegisterPage() {
     try {
       const res = await authApi.googleLogin(response.credential);
       setAuth(res.data.user, res.data.token);
-      toast.success('Account created with Google! Welcome 🎉');
+      toast.success('Account created with Google!');
       router.push('/');
     } catch { toast.error('Google sign-up failed. Try manual registration.'); }
   };
@@ -63,7 +62,7 @@ export default function RegisterPage() {
     try {
       const res = await authApi.verifyEmail({ userId, code });
       setAuth(res.data.user, res.data.token);
-      toast.success('Email verified! Welcome to DropKE 🎉');
+      toast.success('Email verified! Welcome to TISH COLLECTION!');
       router.push('/');
     } catch (err) {
       toast.error(err.response?.data?.message || 'Invalid code');
@@ -80,74 +79,73 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4 py-12">
-      <div className="w-full max-w-md">
+    <div className="min-h-screen flex items-center justify-center bg-surface-50 px-4 py-12">
+      <div className="w-full max-w-md animate-fade-in">
         {/* Logo */}
         <div className="text-center mb-8">
-          <Link href="/" className="inline-flex items-center gap-1">
-            <span className="text-4xl font-extrabold text-red-700">Drop</span>
-            <span className="text-4xl font-extrabold text-green-700">KE</span>
+          <Link href="/" className="inline-flex items-center gap-1.5">
+            <span className="text-3xl font-bold text-surface-900">TISH</span>
+            <span className="text-3xl font-bold text-brand-500">COLLECTION</span>
           </Link>
-          <h1 className="text-2xl font-bold text-gray-900 mt-4">
+          <h1 className="text-xl font-bold text-surface-900 mt-5">
             {step === 'form' ? 'Create your account' : 'Verify your email'}
           </h1>
-          <p className="text-gray-500 mt-1 text-sm">
-            {step === 'form' ? 'Join thousands of Kenyans shopping smarter.' : `Enter the 6-digit code sent to ${form.email}`}
+          <p className="text-surface-500 mt-1 text-sm">
+            {step === 'form' ? 'Join thousands of shoppers across Kenya.' : `Enter the 6-digit code sent to ${form.email}`}
           </p>
         </div>
 
-        {/* ── STEP 1: Registration form ── */}
+        {/* Registration form */}
         {step === 'form' && (
-          <div className="card space-y-4">
-            {/* Google Sign-Up */}
+          <div className="card space-y-5">
             {process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID ? (
               <>
                 <div id="google-btn-reg" className="w-full flex justify-center" />
                 <div className="flex items-center gap-3">
-                  <div className="flex-1 h-px bg-gray-200" />
-                  <span className="text-xs text-gray-400 font-medium">OR REGISTER WITH EMAIL</span>
-                  <div className="flex-1 h-px bg-gray-200" />
+                  <div className="flex-1 h-px bg-surface-200" />
+                  <span className="text-xs text-surface-400 font-medium">OR REGISTER WITH EMAIL</span>
+                  <div className="flex-1 h-px bg-surface-200" />
                 </div>
               </>
             ) : null}
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Full Name *</label>
+                <label className="block text-sm font-medium text-surface-700 mb-1.5">Full Name *</label>
                 <input type="text" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })}
                   className="input-field" placeholder="John Kamau" required />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Email Address *</label>
+                <label className="block text-sm font-medium text-surface-700 mb-1.5">Email Address *</label>
                 <input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })}
                   className="input-field" placeholder="john@email.com" required />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Phone (M-Pesa)</label>
+                <label className="block text-sm font-medium text-surface-700 mb-1.5">Phone (M-Pesa)</label>
                 <input type="tel" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })}
                   className="input-field" placeholder="0712345678" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Password *</label>
+                <label className="block text-sm font-medium text-surface-700 mb-1.5">Password *</label>
                 <div className="relative">
                   <input type={showPass ? 'text' : 'password'} value={form.password}
                     onChange={(e) => setForm({ ...form, password: e.target.value })}
-                    className="input-field pr-12" placeholder="Min. 6 characters" required minLength={6} />
+                    className="input-field pr-14" placeholder="Min. 6 characters" required minLength={6} />
                   <button type="button" onClick={() => setShowPass(!showPass)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 hover:text-gray-600 font-medium">
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-surface-400 hover:text-surface-600 font-medium transition-colors">
                     {showPass ? 'HIDE' : 'SHOW'}
                   </button>
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Confirm Password *</label>
+                <label className="block text-sm font-medium text-surface-700 mb-1.5">Confirm Password *</label>
                 <div className="relative">
                   <input type={showConfirm ? 'text' : 'password'} value={form.confirm}
                     onChange={(e) => setForm({ ...form, confirm: e.target.value })}
-                    className={`input-field pr-12 ${form.confirm && form.password !== form.confirm ? 'border-red-400 focus:ring-red-400' : ''}`}
+                    className={`input-field pr-14 ${form.confirm && form.password !== form.confirm ? 'border-red-300 focus:ring-red-300' : ''}`}
                     placeholder="Repeat your password" required minLength={6} />
                   <button type="button" onClick={() => setShowConfirm(!showConfirm)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 hover:text-gray-600 font-medium">
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-surface-400 hover:text-surface-600 font-medium transition-colors">
                     {showConfirm ? 'HIDE' : 'SHOW'}
                   </button>
                 </div>
@@ -155,7 +153,7 @@ export default function RegisterPage() {
                   <p className="text-xs text-red-500 mt-1">Passwords do not match</p>
                 )}
                 {form.confirm && form.password === form.confirm && form.confirm.length >= 6 && (
-                  <p className="text-xs text-green-600 mt-1">✓ Passwords match</p>
+                  <p className="text-xs text-green-600 mt-1">Passwords match</p>
                 )}
               </div>
               <button type="submit" disabled={loading || (form.confirm && form.password !== form.confirm)}
@@ -166,16 +164,18 @@ export default function RegisterPage() {
           </div>
         )}
 
-        {/* ── STEP 2: Email verification ── */}
+        {/* Email verification */}
         {step === 'verify' && (
           <div className="card space-y-5">
             <div className="text-center">
-              <div className="text-5xl mb-3">📧</div>
-              <p className="text-sm text-gray-500">We sent a 6-digit code to <strong>{form.email}</strong></p>
+              <div className="w-14 h-14 bg-brand-50 rounded-full flex items-center justify-center mx-auto mb-3">
+                <span className="text-brand-500 text-xl font-bold">@</span>
+              </div>
+              <p className="text-sm text-surface-500">We sent a 6-digit code to <strong>{form.email}</strong></p>
             </div>
             <form onSubmit={handleVerify} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2 text-center">Enter 6-digit code</label>
+                <label className="block text-sm font-medium text-surface-700 mb-2 text-center">Enter 6-digit code</label>
                 <input
                   type="text" inputMode="numeric" maxLength={6} value={code}
                   onChange={(e) => setCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
@@ -187,22 +187,22 @@ export default function RegisterPage() {
               </button>
             </form>
             <div className="text-center space-y-2">
-              <p className="text-sm text-gray-500">Didn't receive the code?</p>
+              <p className="text-sm text-surface-500">Didn&apos;t receive the code?</p>
               <button onClick={handleResend} disabled={resending}
-                className="text-sm text-red-700 font-semibold hover:underline disabled:opacity-50">
+                className="text-sm text-brand-600 font-semibold hover:text-brand-700 disabled:opacity-50 transition-colors">
                 {resending ? 'Sending...' : 'Resend code'}
               </button>
-              <p className="text-xs text-gray-400">Check your spam/junk folder too</p>
+              <p className="text-xs text-surface-400">Check your spam/junk folder too</p>
             </div>
-            <button onClick={() => setStep('form')} className="w-full text-xs text-gray-400 hover:text-gray-600">
+            <button onClick={() => setStep('form')} className="w-full text-xs text-surface-400 hover:text-surface-600 transition-colors">
               ← Back to registration
             </button>
           </div>
         )}
 
-        <p className="text-center text-sm text-gray-600 mt-5">
+        <p className="text-center text-sm text-surface-500 mt-6">
           Already have an account?{' '}
-          <Link href="/login" className="text-red-700 font-semibold hover:underline">Sign in</Link>
+          <Link href="/login" className="text-surface-900 font-semibold hover:text-brand-600 transition-colors">Sign in</Link>
         </p>
       </div>
     </div>

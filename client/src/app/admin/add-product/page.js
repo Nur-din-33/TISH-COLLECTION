@@ -83,16 +83,16 @@ export default function AddProductPage() {
     : null;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-surface-50">
       <Navbar />
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
         {/* Header */}
         <div className="flex items-center gap-4 mb-6">
-          <button onClick={() => router.push('/admin')} className="text-gray-500 hover:text-gray-700">
+          <button onClick={() => router.push('/admin')} className="text-surface-500 hover:text-surface-700 transition-colors">
             ← Back
           </button>
-          <h1 className="text-2xl font-bold text-gray-900">Add New Product</h1>
+          <h1 className="text-2xl font-bold text-surface-900 tracking-tight">Add New Product</h1>
         </div>
 
         <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -101,11 +101,11 @@ export default function AddProductPage() {
           <div className="lg:col-span-2 space-y-5">
 
             {/* Basic Info */}
-            <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6">
-              <h2 className="text-base font-semibold text-gray-800 mb-4">Product Information</h2>
+            <div className="card">
+              <h2 className="text-base font-semibold text-surface-800 mb-4">Product Information</h2>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-surface-700 mb-1.5">
                     Product Name <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -113,13 +113,13 @@ export default function AddProductPage() {
                     value={form.name}
                     onChange={handleNameChange}
                     placeholder="e.g. Wireless Bluetooth Earbuds"
-                    className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-red-500"
+                    className="input-field"
                     required
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-surface-700 mb-1.5">
                     URL Slug <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -127,56 +127,56 @@ export default function AddProductPage() {
                     value={form.slug}
                     onChange={(e) => setForm({ ...form, slug: e.target.value })}
                     placeholder="wireless-bluetooth-earbuds"
-                    className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 font-mono"
+                    className="input-field font-mono"
                     required
                   />
-                  <p className="text-xs text-gray-400 mt-1">Auto-generated from name. Must be unique.</p>
+                  <p className="text-xs text-surface-400 mt-1">Auto-generated from name. Must be unique.</p>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                  <label className="block text-sm font-medium text-surface-700 mb-1.5">Description</label>
                   <textarea
                     rows={4}
                     value={form.description}
                     onChange={(e) => setForm({ ...form, description: e.target.value })}
                     placeholder="Describe the product — features, benefits, why Kenyans will love it..."
-                    className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 resize-none"
+                    className="input-field resize-none"
                   />
                 </div>
               </div>
             </div>
 
             {/* Pricing */}
-            <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6">
-              <h2 className="text-base font-semibold text-gray-800 mb-4">Pricing (KES)</h2>
+            <div className="card">
+              <h2 className="text-base font-semibold text-surface-800 mb-4">Pricing (KES)</h2>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-surface-700 mb-1.5">
                     Selling Price <span className="text-red-500">*</span>
                   </label>
                   <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">KES</span>
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-surface-400 text-sm">KES</span>
                     <input
                       type="number"
                       value={form.price}
                       onChange={(e) => setForm({ ...form, price: e.target.value })}
                       placeholder="2499"
-                      className="w-full border border-gray-300 rounded-lg pl-12 pr-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-red-500"
+                      className="input-field pl-12"
                       required
                       min="0"
                     />
                   </div>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Cost Price</label>
+                  <label className="block text-sm font-medium text-surface-700 mb-1.5">Cost Price</label>
                   <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">KES</span>
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-surface-400 text-sm">KES</span>
                     <input
                       type="number"
                       value={form.costPrice}
                       onChange={(e) => setForm({ ...form, costPrice: e.target.value })}
                       placeholder="800"
-                      className="w-full border border-gray-300 rounded-lg pl-12 pr-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-red-500"
+                      className="input-field pl-12"
                       min="0"
                     />
                   </div>
@@ -199,11 +199,11 @@ export default function AddProductPage() {
             </div>
 
             {/* Stock & Category */}
-            <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6">
-              <h2 className="text-base font-semibold text-gray-800 mb-4">Stock & Category</h2>
+            <div className="card">
+              <h2 className="text-base font-semibold text-surface-800 mb-4">Stock & Category</h2>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-surface-700 mb-1.5">
                     Stock Quantity <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -211,19 +211,19 @@ export default function AddProductPage() {
                     value={form.stock}
                     onChange={(e) => setForm({ ...form, stock: e.target.value })}
                     placeholder="50"
-                    className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-red-500"
+                    className="input-field"
                     required
                     min="0"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-surface-700 mb-1.5">
                     Category <span className="text-red-500">*</span>
                   </label>
                   <select
                     value={form.categoryId}
                     onChange={(e) => setForm({ ...form, categoryId: e.target.value })}
-                    className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 bg-white"
+                    className="input-field"
                     required
                   >
                     <option value="">Select category</option>
@@ -240,33 +240,33 @@ export default function AddProductPage() {
           <div className="space-y-5">
 
             {/* Image */}
-            <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6">
-              <h2 className="text-base font-semibold text-gray-800 mb-4">Product Image</h2>
+            <div className="card">
+              <h2 className="text-base font-semibold text-surface-800 mb-4">Product Image</h2>
 
               {/* Preview */}
-              <div className="w-full aspect-square rounded-lg overflow-hidden bg-gray-100 mb-4 flex items-center justify-center">
+              <div className="w-full aspect-square rounded-xl overflow-hidden bg-surface-100 mb-4 flex items-center justify-center border border-surface-200">
                 {imagePreview ? (
                   <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
                 ) : (
-                  <div className="text-center text-gray-300">
-                    <p className="text-4xl mb-2">🖼️</p>
+                  <div className="text-center text-surface-300">
+                    <div className="w-12 h-12 bg-surface-200 rounded-full flex items-center justify-center mx-auto mb-2"><span className="text-surface-400">+</span></div>
                     <p className="text-xs">Image preview</p>
                   </div>
                 )}
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Image URL</label>
+                <label className="block text-sm font-medium text-surface-700 mb-1.5">Image URL</label>
                 <input
                   type="url"
                   value={form.imageUrl}
                   onChange={handleImageUrlChange}
                   placeholder="https://images.unsplash.com/..."
-                  className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-red-500"
+                  className="input-field"
                 />
-                <p className="text-xs text-gray-400 mt-1">
+                <p className="text-xs text-surface-400 mt-1">
                   Paste any image URL. Use{' '}
-                  <a href="https://unsplash.com" target="_blank" rel="noreferrer" className="text-blue-500 hover:underline">
+                  <a href="https://unsplash.com" target="_blank" rel="noreferrer" className="text-brand-600 hover:underline">
                     Unsplash.com
                   </a>{' '}
                   for free photos.
@@ -275,8 +275,8 @@ export default function AddProductPage() {
             </div>
 
             {/* Settings */}
-            <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6">
-              <h2 className="text-base font-semibold text-gray-800 mb-4">Settings</h2>
+            <div className="card">
+              <h2 className="text-base font-semibold text-surface-800 mb-4">Settings</h2>
               <label className="flex items-center gap-3 cursor-pointer">
                 <div className="relative">
                   <input
@@ -285,12 +285,12 @@ export default function AddProductPage() {
                     onChange={(e) => setForm({ ...form, featured: e.target.checked })}
                     className="sr-only"
                   />
-                  <div className={`w-10 h-6 rounded-full transition-colors ${form.featured ? 'bg-red-600' : 'bg-gray-200'}`} />
+                  <div className={`w-10 h-6 rounded-full transition-colors ${form.featured ? 'bg-brand-500' : 'bg-surface-200'}`} />
                   <div className={`absolute top-1 w-4 h-4 bg-white rounded-full shadow transition-transform ${form.featured ? 'translate-x-5' : 'translate-x-1'}`} />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-700">Featured Product</p>
-                  <p className="text-xs text-gray-400">Show on homepage deals section</p>
+                  <p className="text-sm font-medium text-surface-700">Featured Product</p>
+                  <p className="text-xs text-surface-400">Show on homepage deals section</p>
                 </div>
               </label>
             </div>
@@ -299,15 +299,15 @@ export default function AddProductPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-red-700 hover:bg-red-800 disabled:opacity-50 text-white font-bold py-3 px-5 rounded-xl transition-colors text-base"
+              className="btn-primary w-full py-3 text-base"
             >
-              {loading ? 'Adding Product...' : '+ Add Product'}
+              {loading ? 'Adding Product...' : 'Add Product'}
             </button>
 
             <button
               type="button"
               onClick={() => router.push('/admin')}
-              className="w-full bg-white hover:bg-gray-50 text-gray-700 font-semibold py-3 px-5 rounded-xl border border-gray-200 transition-colors text-sm"
+              className="btn-secondary w-full py-3"
             >
               Cancel
             </button>

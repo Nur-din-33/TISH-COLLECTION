@@ -5,9 +5,13 @@ import { useParams } from 'next/navigation';
 import Navbar from '../../../components/layout/Navbar';
 import Footer from '../../../components/layout/Footer';
 import { productsApi } from '../../../lib/api';
+import { useCartStore } from '../../../lib/store';
+import { ShoppingCartIcon } from '@heroicons/react/24/outline';
+import toast from 'react-hot-toast';
 
 export default function ProductDetailsPage() {
   const { slug } = useParams();
+  const addItem = useCartStore((s) => s.addItem);
 
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -20,7 +24,7 @@ export default function ProductDetailsPage() {
     setError(null);
 
     productsApi
-      .getOne(slug) // ✅ FIXED HERE
+      .getOne(slug)
       .then((res) => {
         setProduct(res.data.product);
       })
@@ -31,34 +35,57 @@ export default function ProductDetailsPage() {
       .finally(() => setLoading(false));
   }, [slug]);
 
-  // 🔄 Loading state
+  const handleAddToCart = () => {
+    if (!product || product.stock === 0) return;
+    addItem(product);
+    toast.success(`${product.name} added to cart!`);
+  };
+
+  const formatPrice = (price) =>
+    new Intl.NumberFormat('en-KE', {
+      style: 'currency',
+      currency: 'KES',
+      minimumFractionDigits: 0,
+    }).format(price);
+
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p>Loading product...</p>
+      <div className="min-h-screen flex flex-col">
+        <Navbar />
+        <div className="flex-1 flex items-center justify-center">
+          <div className="w-10 h-10 border-2 border-surface-200 border-t-surface-900 rounded-full animate-spin" />
+        </div>
       </div>
     );
   }
 
-  // ❌ Error or not found
   if (error || !product) {
     return (
-      <div className="min-h-screen flex items-center justify-center text-red-600">
-        {error || 'Product not found'}
+      <div className="min-h-screen flex flex-col">
+        <Navbar />
+        <div className="flex-1 flex items-center justify-center">
+          <div className="text-center">
+            <div className="w-16 h-16 bg-surface-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <span className="text-surface-400 text-xl">!</span>
+            </div>
+            <p className="text-surface-600 font-medium">{error || 'Product not found'}</p>
+            <a href="/products" className="btn-primary inline-block mt-4 text-sm">Browse Products</a>
+          </div>
+        </div>
+        <Footer />
       </div>
     );
   }
 
-  // ✅ Main UI
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
 
-      <main className="flex-1 max-w-6xl mx-auto px-4 py-10 w-full">
-        <div className="grid md:grid-cols-2 gap-10">
+      <main className="flex-1 max-w-6xl mx-auto px-4 py-12 w-full">
+        <div className="grid md:grid-cols-2 gap-12">
 
           {/* IMAGE */}
-          <div className="bg-gray-100 rounded-xl overflow-hidden">
+          <div className="bg-surface-50 rounded-2xl overflow-hidden border border-surface-100">
             {product.imageUrl ? (
               <img
                 src={product.imageUrl}
@@ -66,51 +93,51 @@ export default function ProductDetailsPage() {
                 className="w-full h-full object-cover"
               />
             ) : (
-              <div className="w-full h-96 flex items-center justify-center text-gray-300 text-5xl">
-                📦
+              <div className="w-full h-96 flex items-center justify-center text-surface-200">
+                <span className="text-8xl font-light">+</span>
               </div>
             )}
           </div>
 
           {/* DETAILS */}
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">
+          <div className="flex flex-col justify-center">
+            <p className="text-xs text-surface-400 uppercase tracking-widest font-medium mb-3">
+              {product.category?.name || 'Product'}
+            </p>
+
+            <h1 className="text-3xl font-bold text-surface-900 tracking-tight leading-tight">
               {product.name}
             </h1>
 
-            <p className="text-gray-600 mt-4">
+            <p className="text-surface-500 mt-4 leading-relaxed">
               {product.description}
             </p>
 
-            <p className="text-2xl font-bold text-red-700 mt-6">
-              KES {product.price}
+            <p className="text-3xl font-bold text-surface-900 mt-8">
+              {formatPrice(product.price)}
             </p>
 
-            <div className="mt-4 text-sm text-gray-500 space-y-1">
-              <p>
-                Category:{' '}
-                <span className="font-medium">
-                  {product.category?.name || 'N/A'}
+            <div className="mt-6 space-y-2">
+              <div className="flex items-center gap-3 text-sm">
+                <span className="text-surface-400 w-20">Stock</span>
+                <span className={`font-medium ${product.stock > 0 ? 'text-surface-700' : 'text-surface-400'}`}>
+                  {product.stock > 0 ? `${product.stock} available` : 'Out of stock'}
                 </span>
-              </p>
-              <p>
-                Stock:{' '}
-                <span className="font-medium">
-                  {product.stock}
-                </span>
-              </p>
-              <p>
-                Supplier:{' '}
-                <span className="font-medium">
-                  {product.supplier?.name || 'N/A'}
-                </span>
-              </p>
+              </div>
+              {product.supplier?.name && (
+                <div className="flex items-center gap-3 text-sm">
+                  <span className="text-surface-400 w-20">Supplier</span>
+                  <span className="font-medium text-surface-700">{product.supplier.name}</span>
+                </div>
+              )}
             </div>
 
             <button
+              onClick={handleAddToCart}
               disabled={product.stock === 0}
-              className="mt-6 bg-green-700 hover:bg-green-800 disabled:opacity-50 text-white px-6 py-3 rounded-lg"
+              className="mt-8 flex items-center justify-center gap-2 bg-surface-900 hover:bg-surface-800 disabled:opacity-40 text-white px-8 py-3.5 rounded-xl font-medium transition-all duration-300 hover:shadow-elegant w-full sm:w-auto"
             >
+              <ShoppingCartIcon className="w-5 h-5" />
               {product.stock === 0 ? 'Out of Stock' : 'Add to Cart'}
             </button>
           </div>
