@@ -310,7 +310,7 @@ function AdminProductsContent() {
                     }`}>
                     {uploading ? (
                       <div className="flex flex-col items-center gap-2">
-                        <div className="w-8 h-8 border-3 border-surface-900 border-t-transparent rounded-full animate-spin" />
+                        <div className="w-8 h-8 border-2 border-surface-900 border-t-transparent rounded-full animate-spin" />
                         <p className="text-sm text-surface-500">Uploading...</p>
                       </div>
                     ) : (

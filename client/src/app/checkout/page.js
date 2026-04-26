@@ -188,7 +188,7 @@ function CheckoutContent() {
         {/* Step: Processing */}
         {step === 'processing' && (
           <div className="text-center py-20">
-            <div className="w-16 h-16 border-3 border-surface-200 border-t-brand-500 rounded-full animate-spin mx-auto mb-6" />
+            <div className="w-16 h-16 border-2 border-surface-200 border-t-brand-500 rounded-full animate-spin mx-auto mb-6" />
             <h2 className="text-2xl font-bold text-surface-900 mb-3">Waiting for Payment...</h2>
             <p className="text-surface-500 mb-1">Check your phone <strong>{form.phone}</strong></p>
             <p className="text-surface-400 text-sm">Enter your M-Pesa PIN to complete the payment.</p>

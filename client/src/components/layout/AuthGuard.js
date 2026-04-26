@@ -33,7 +33,7 @@ export default function AuthGuard({ children, requireAdmin = false }) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-surface-50">
         <div className="text-center">
-          <div className="w-10 h-10 border-3 border-surface-200 border-t-surface-900 rounded-full animate-spin mx-auto mb-4" />
+          <div className="w-10 h-10 border-2 border-surface-200 border-t-surface-900 rounded-full animate-spin mx-auto mb-4" />
           <p className="text-surface-500 text-sm">Loading...</p>
         </div>
       </div>
@@ -44,7 +44,7 @@ export default function AuthGuard({ children, requireAdmin = false }) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-surface-50">
         <div className="text-center">
-          <div className="w-10 h-10 border-3 border-surface-200 border-t-surface-900 rounded-full animate-spin mx-auto mb-4" />
+          <div className="w-10 h-10 border-2 border-surface-200 border-t-surface-900 rounded-full animate-spin mx-auto mb-4" />
           <p className="text-surface-500 text-sm">Redirecting...</p>
         </div>
       </div>

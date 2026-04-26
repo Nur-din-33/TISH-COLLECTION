@@ -59,10 +59,10 @@ export default function Navbar({ transparent = false }) {
         Free delivery on orders over KES 5,000 &mdash; <Link href="/products" className="underline underline-offset-2 hover:text-brand-400 transition-colors">Shop Now</Link>
       </div>
 
-      <nav className={`sticky top-0 z-50 transition-all duration-500 ${
+      <nav className={`z-50 transition-all duration-500 ${
         isTransparent
-          ? 'bg-transparent absolute w-full top-8'
-          : 'bg-white shadow-soft border-b border-surface-100'
+          ? 'absolute top-8 w-full bg-transparent'
+          : 'sticky top-0 bg-white shadow-soft border-b border-surface-100'
       }`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 md:h-20">

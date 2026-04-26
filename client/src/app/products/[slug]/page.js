@@ -53,7 +53,7 @@ export default function ProductDetailsPage() {
       <div className="min-h-screen flex flex-col">
         <Navbar />
         <div className="flex-1 flex items-center justify-center">
-          <div className="w-10 h-10 border-3 border-surface-200 border-t-surface-900 rounded-full animate-spin" />
+          <div className="w-10 h-10 border-2 border-surface-200 border-t-surface-900 rounded-full animate-spin" />
         </div>
       </div>
     );
