@@ -194,6 +194,9 @@ export default function RegisterPage() {
               </button>
               <p className="text-xs text-surface-400">Check your spam/junk folder too</p>
             </div>
+            <button onClick={() => setStep('form')} className="w-full text-xs text-surface-400 hover:text-surface-600 transition-colors">
+              ← Back to registration
+            </button>
           </div>
         )}
 

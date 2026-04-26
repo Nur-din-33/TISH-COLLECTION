@@ -67,8 +67,10 @@ export default function Navbar({ transparent = false }) {
 
       <nav className={`z-50 transition-all duration-500 ${
         isTransparent
-          ? 'absolute top-8 w-full bg-transparent'
-          : 'sticky top-0 bg-white shadow-soft border-b border-surface-100'
+          ? 'fixed top-8 w-full bg-transparent'
+          : transparent
+            ? 'fixed top-0 w-full bg-white shadow-soft border-b border-surface-100'
+            : 'sticky top-0 bg-white shadow-soft border-b border-surface-100'
       }`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 md:h-20">
