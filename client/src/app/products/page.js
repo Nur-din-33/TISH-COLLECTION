@@ -7,12 +7,12 @@ import ProductCard from '../../components/shop/ProductCard';
 import { productsApi } from '../../lib/api';
 
 const categories = [
-  { name: 'All',            slug: '' },
-  { name: 'Electronics',   slug: 'electronics' },
-  { name: 'Fashion',       slug: 'fashion' },
-  { name: 'Home & Garden', slug: 'home-garden' },
-  { name: 'Beauty',        slug: 'beauty' },
-  { name: 'Sports',        slug: 'sports' },
+  { name: 'All',               slug: '' },
+  { name: "Men's Clothing",    slug: 'mens-clothing' },
+  { name: "Women's Clothing",  slug: 'womens-clothing' },
+  { name: 'Sneakers',          slug: 'sneakers' },
+  { name: 'Formal Shoes',      slug: 'formal-shoes' },
+  { name: 'Accessories',       slug: 'accessories' },
 ];
 
 function ProductsContent() {
