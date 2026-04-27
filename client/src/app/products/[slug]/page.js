@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import Navbar from '../../../components/layout/Navbar';
 import Footer from '../../../components/layout/Footer';
 import { productsApi } from '../../../lib/api';
@@ -11,6 +11,7 @@ import toast from 'react-hot-toast';
 
 export default function ProductDetailsPage() {
   const { slug } = useParams();
+  const router = useRouter();
   const addItem = useCartStore((s) => s.addItem);
 
   const [product, setProduct] = useState(null);
@@ -39,6 +40,12 @@ export default function ProductDetailsPage() {
     if (!product || product.stock === 0) return;
     addItem(product);
     toast.success(`${product.name} added to cart!`);
+  };
+
+  const handleBuyNow = () => {
+    if (!product || product.stock === 0) return;
+    addItem(product);
+    router.push('/checkout');
   };
 
   const formatPrice = (price) =>
@@ -132,14 +139,23 @@ export default function ProductDetailsPage() {
               )}
             </div>
 
-            <button
-              onClick={handleAddToCart}
-              disabled={product.stock === 0}
-              className="mt-8 flex items-center justify-center gap-2 bg-surface-900 hover:bg-surface-800 disabled:opacity-40 text-white px-8 py-3.5 rounded-xl font-medium transition-all duration-300 hover:shadow-elegant w-full sm:w-auto"
-            >
-              <ShoppingCartIcon className="w-5 h-5" />
-              {product.stock === 0 ? 'Out of Stock' : 'Add to Cart'}
-            </button>
+            <div className="mt-8 flex flex-col sm:flex-row gap-3">
+              <button
+                onClick={handleBuyNow}
+                disabled={product.stock === 0}
+                className="flex-1 flex items-center justify-center gap-2 bg-brand-500 hover:bg-brand-600 disabled:opacity-40 text-white px-8 py-3.5 rounded-xl font-semibold transition-all duration-300 hover:shadow-elegant"
+              >
+                {product.stock === 0 ? 'Out of Stock' : 'Buy Now'}
+              </button>
+              <button
+                onClick={handleAddToCart}
+                disabled={product.stock === 0}
+                className="flex-1 flex items-center justify-center gap-2 bg-surface-900 hover:bg-surface-800 disabled:opacity-40 text-white px-8 py-3.5 rounded-xl font-medium transition-all duration-300 hover:shadow-elegant"
+              >
+                <ShoppingCartIcon className="w-5 h-5" />
+                Add to Cart
+              </button>
+            </div>
           </div>
         </div>
       </main>
