@@ -34,11 +34,11 @@ async function main() {
   console.log(`🔑 Admin password: ${ADMIN_PASSWORD}`);
 
   const categories = await Promise.all([
-    prisma.category.upsert({ where: { slug: 'electronics' }, update: {}, create: { name: 'Electronics', slug: 'electronics' } }),
-    prisma.category.upsert({ where: { slug: 'fashion' },     update: {}, create: { name: 'Fashion',     slug: 'fashion'     } }),
-    prisma.category.upsert({ where: { slug: 'home-garden' }, update: {}, create: { name: 'Home & Garden',slug: 'home-garden' } }),
-    prisma.category.upsert({ where: { slug: 'beauty' },      update: {}, create: { name: 'Beauty & Health',slug: 'beauty'   } }),
-    prisma.category.upsert({ where: { slug: 'sports' },      update: {}, create: { name: 'Sports & Outdoors',slug: 'sports' } }),
+    prisma.category.upsert({ where: { slug: 'mens-clothing' },   update: {}, create: { name: "Men's Clothing",   slug: 'mens-clothing'   } }),
+    prisma.category.upsert({ where: { slug: 'womens-clothing' }, update: {}, create: { name: "Women's Clothing", slug: 'womens-clothing' } }),
+    prisma.category.upsert({ where: { slug: 'sneakers' },       update: {}, create: { name: 'Sneakers',          slug: 'sneakers'       } }),
+    prisma.category.upsert({ where: { slug: 'formal-shoes' },   update: {}, create: { name: 'Formal Shoes',      slug: 'formal-shoes'   } }),
+    prisma.category.upsert({ where: { slug: 'accessories' },    update: {}, create: { name: 'Accessories',       slug: 'accessories'    } }),
   ]);
   console.log('✅ Categories created');
 
@@ -49,12 +49,12 @@ async function main() {
   });
 
   const products = [
-    { name: 'Wireless Bluetooth Earbuds', slug: 'wireless-bluetooth-earbuds', description: 'Premium sound quality earbuds with 24-hour battery life. Sweat resistant.', price: 2499, costPrice: 800, stock: 50, imageUrl: 'https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=500', featured: true, categoryId: categories[0].id, supplierId: supplier.id },
-    { name: 'Smart Watch Fitness Tracker', slug: 'smart-watch-fitness-tracker', description: 'Track steps, heart rate, and sleep. Compatible with all phones.', price: 4999, costPrice: 1800, stock: 30, imageUrl: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500', featured: true, categoryId: categories[0].id, supplierId: supplier.id },
-    { name: 'Ankara Print Tote Bag', slug: 'ankara-print-tote-bag', description: 'Beautiful African print canvas tote bag. Large size.', price: 1299, costPrice: 400, stock: 100, imageUrl: 'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=500', featured: false, categoryId: categories[1].id, supplierId: supplier.id },
-    { name: 'Solar Power Bank 20000mAh', slug: 'solar-power-bank-20000mah', description: 'Dual USB ports. Solar charging panel — perfect for upcountry use.', price: 3499, costPrice: 1200, stock: 45, imageUrl: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=500', featured: true, categoryId: categories[0].id, supplierId: supplier.id },
-    { name: 'Non-Stick Cooking Set (5pc)', slug: 'non-stick-cooking-set-5-piece', description: 'Complete kitchen set. Works on gas and electric stoves.', price: 5999, costPrice: 2200, stock: 25, imageUrl: 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=500', featured: false, categoryId: categories[2].id, supplierId: supplier.id },
-    { name: 'Kenyan Coffee Mug Set (4pc)', slug: 'kenyan-coffee-mug-set', description: 'Premium ceramic mugs. Microwave and dishwasher safe.', price: 1799, costPrice: 600, stock: 80, imageUrl: 'https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?w=500', featured: false, categoryId: categories[2].id, supplierId: supplier.id },
+    { name: 'Classic Fit Oxford Shirt', slug: 'classic-fit-oxford-shirt', description: 'Premium cotton Oxford shirt with button-down collar. Perfect for smart-casual wear.', price: 2499, costPrice: 800, stock: 50, imageUrl: 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=500', featured: true, categoryId: categories[0].id, supplierId: supplier.id },
+    { name: 'Slim Fit Chino Trousers', slug: 'slim-fit-chino-trousers', description: 'Comfortable stretch chinos with a modern slim fit. Available in multiple colors.', price: 3499, costPrice: 1200, stock: 40, imageUrl: 'https://images.unsplash.com/photo-1473966968600-fa801b869a1a?w=500', featured: true, categoryId: categories[0].id, supplierId: supplier.id },
+    { name: 'Floral Summer Dress', slug: 'floral-summer-dress', description: 'Lightweight floral print dress perfect for warm weather. Flattering A-line cut.', price: 2999, costPrice: 900, stock: 60, imageUrl: 'https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=500', featured: true, categoryId: categories[1].id, supplierId: supplier.id },
+    { name: 'Air Max Running Sneakers', slug: 'air-max-running-sneakers', description: 'Lightweight running shoes with responsive cushioning and breathable mesh upper.', price: 7999, costPrice: 3500, stock: 35, imageUrl: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500', featured: true, categoryId: categories[2].id, supplierId: supplier.id },
+    { name: 'Leather Derby Shoes', slug: 'leather-derby-shoes', description: 'Handcrafted genuine leather derby shoes. Classic design for formal occasions.', price: 5999, costPrice: 2200, stock: 25, imageUrl: 'https://images.unsplash.com/photo-1614252369475-531eba835eb1?w=500', featured: false, categoryId: categories[3].id, supplierId: supplier.id },
+    { name: 'Canvas Crossbody Bag', slug: 'canvas-crossbody-bag', description: 'Stylish canvas crossbody bag with adjustable strap. Multiple compartments.', price: 1799, costPrice: 600, stock: 80, imageUrl: 'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=500', featured: false, categoryId: categories[4].id, supplierId: supplier.id },
   ];
 
   for (const p of products) {
