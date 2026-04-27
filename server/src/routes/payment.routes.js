@@ -126,12 +126,49 @@ router.post('/mpesa/callback', async (req, res) => {
   }
 });
 
-// GET /api/payments/mpesa/status/:checkoutRequestId — poll payment status
-router.get('/mpesa/status/:checkoutRequestId', authenticate, async (req, res) => {
+// GET /api/payments/mpesa/status/:orderId — poll payment status by order ID
+router.get('/mpesa/status/:orderId', authenticate, async (req, res) => {
   try {
-    const status = await queryStkStatus(req.params.checkoutRequestId);
-    res.json({ success: true, status });
+    // First check if the callback already updated the payment in the database
+    const payment = await prisma.payment.findUnique({
+      where: { orderId: req.params.orderId },
+    });
+
+    if (!payment) {
+      return res.status(404).json({ success: false, message: 'Payment not found' });
+    }
+
+    // If callback already marked it as completed or failed, return immediately
+    if (payment.status === 'COMPLETED') {
+      return res.json({ success: true, status: { ResultCode: 0, ResultDesc: 'Success' } });
+    }
+    if (payment.status === 'FAILED') {
+      return res.json({ success: true, status: { ResultCode: 1, ResultDesc: 'Payment failed or was cancelled' } });
+    }
+
+    // Otherwise query Safaricom directly using the CheckoutRequestID
+    try {
+      const status = await queryStkStatus(payment.mpesaCode);
+
+      // If Safaricom confirms payment, update the database too
+      if (status.ResultCode === '0' || status.ResultCode === 0) {
+        await prisma.payment.update({
+          where: { orderId: req.params.orderId },
+          data: { status: 'COMPLETED' },
+        });
+        await prisma.order.update({
+          where: { id: req.params.orderId },
+          data: { status: 'CONFIRMED' },
+        });
+      }
+
+      res.json({ success: true, status });
+    } catch (queryError) {
+      // Safaricom query failed — return current DB status so frontend keeps polling
+      res.json({ success: true, status: { ResultCode: 1032, ResultDesc: 'Request cancelled by user or still processing' } });
+    }
   } catch (error) {
+    console.error('Payment status check error:', error);
     res.status(500).json({ success: false, message: 'Status check failed' });
   }
 });
