@@ -2,8 +2,8 @@ import './globals.css';
 import { Toaster } from 'react-hot-toast';
 
 export const metadata = {
-  title: 'TISH COLLECTION — Premium Online Shopping',
-  description: 'Discover premium electronics, fashion, home goods and more. Fast delivery across Kenya. Secure M-Pesa payments.',
+  title: 'TISH COLLECTION — Premium Clothing & Shoes',
+  description: 'Discover premium clothing and shoes for every style. Fast delivery across Kenya. Secure M-Pesa payments.',
 };
 
 export default function RootLayout({ children }) {

@@ -2,7 +2,7 @@ import Link from 'next/link';
 
 const COMPANY = {
   name:      'TISH COLLECTION',
-  tagline:   "Kenya's trusted online shopping destination.",
+  tagline:   "Kenya's trusted fashion & footwear destination.",
   email:     'info@tishcollection.co.ke',
   phone:     '+254 757 879 451',
   whatsapp:  '254757879451',
@@ -47,10 +47,11 @@ export default function Footer() {
             <h4 className="text-white font-bold mb-5 text-xs uppercase tracking-[0.2em]">Shop</h4>
             <ul className="space-y-3 text-sm">
               <li><Link href="/products" className="hover:text-white transition-colors duration-200">All Products</Link></li>
-              <li><Link href="/products?category=electronics" className="hover:text-white transition-colors duration-200">Electronics</Link></li>
-              <li><Link href="/products?category=fashion"     className="hover:text-white transition-colors duration-200">Fashion</Link></li>
-              <li><Link href="/products?category=home-garden" className="hover:text-white transition-colors duration-200">Home & Garden</Link></li>
-              <li><Link href="/products?category=beauty"      className="hover:text-white transition-colors duration-200">Beauty & Health</Link></li>
+              <li><Link href="/products?category=mens-clothing"   className="hover:text-white transition-colors duration-200">Men's Clothing</Link></li>
+              <li><Link href="/products?category=womens-clothing" className="hover:text-white transition-colors duration-200">Women's Clothing</Link></li>
+              <li><Link href="/products?category=sneakers"        className="hover:text-white transition-colors duration-200">Sneakers</Link></li>
+              <li><Link href="/products?category=formal-shoes"    className="hover:text-white transition-colors duration-200">Formal Shoes</Link></li>
+              <li><Link href="/products?category=accessories"     className="hover:text-white transition-colors duration-200">Accessories</Link></li>
               <li><Link href="/products?featured=true"        className="hover:text-white transition-colors duration-200">Featured Deals</Link></li>
             </ul>
           </div>

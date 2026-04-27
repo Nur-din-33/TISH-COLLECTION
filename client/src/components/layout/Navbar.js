@@ -88,20 +88,25 @@ export default function Navbar({ transparent = false }) {
               } ${pathname === '/products' ? (isTransparent ? 'text-white border-b-2 border-white pb-0.5' : 'text-surface-900 border-b-2 border-surface-900 pb-0.5') : ''}`}>
                 Shop
               </Link>
-              <Link href="/products?category=electronics" className={`text-sm uppercase tracking-wider font-semibold transition-colors hover:text-brand-500 ${
+              <Link href="/products?category=mens-clothing" className={`text-sm uppercase tracking-wider font-semibold transition-colors hover:text-brand-500 ${
                 isTransparent ? 'text-white/90' : 'text-surface-700'
               }`}>
-                Electronics
+                Men
               </Link>
-              <Link href="/products?category=fashion" className={`text-sm uppercase tracking-wider font-semibold transition-colors hover:text-brand-500 ${
+              <Link href="/products?category=womens-clothing" className={`text-sm uppercase tracking-wider font-semibold transition-colors hover:text-brand-500 ${
                 isTransparent ? 'text-white/90' : 'text-surface-700'
               }`}>
-                Fashion
+                Women
               </Link>
-              <Link href="/products?category=home-garden" className={`text-sm uppercase tracking-wider font-semibold transition-colors hover:text-brand-500 ${
+              <Link href="/products?category=sneakers" className={`text-sm uppercase tracking-wider font-semibold transition-colors hover:text-brand-500 ${
                 isTransparent ? 'text-white/90' : 'text-surface-700'
               }`}>
-                Home
+                Sneakers
+              </Link>
+              <Link href="/products?category=formal-shoes" className={`text-sm uppercase tracking-wider font-semibold transition-colors hover:text-brand-500 ${
+                isTransparent ? 'text-white/90' : 'text-surface-700'
+              }`}>
+                Shoes
               </Link>
             </div>
 
@@ -192,11 +197,11 @@ export default function Navbar({ transparent = false }) {
 
               {[
                 { href: '/products', label: 'Shop All' },
-                { href: '/products?category=electronics', label: 'Electronics' },
-                { href: '/products?category=fashion', label: 'Fashion' },
-                { href: '/products?category=home-garden', label: 'Home & Garden' },
-                { href: '/products?category=beauty', label: 'Beauty' },
-                { href: '/products?category=sports', label: 'Sports' },
+                { href: '/products?category=mens-clothing', label: "Men's Clothing" },
+                { href: '/products?category=womens-clothing', label: "Women's Clothing" },
+                { href: '/products?category=sneakers', label: 'Sneakers' },
+                { href: '/products?category=formal-shoes', label: 'Formal Shoes' },
+                { href: '/products?category=accessories', label: 'Accessories' },
               ].map((link) => (
                 <Link key={link.href} href={link.href}
                   className="block text-base font-semibold text-surface-800 py-3 px-2 border-b border-surface-50 hover:text-brand-500 transition-colors uppercase tracking-wider"

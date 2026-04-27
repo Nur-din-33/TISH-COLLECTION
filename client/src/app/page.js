@@ -17,34 +17,34 @@ import {
 
 const categories = [
   {
-    name: 'Electronics',
-    slug: 'electronics',
-    tagline: 'Latest gadgets & devices',
+    name: "Men's Clothing",
+    slug: 'mens-clothing',
+    tagline: 'Sharp fits for every occasion',
     gradient: 'from-blue-900 to-surface-950',
   },
   {
-    name: 'Fashion',
-    slug: 'fashion',
-    tagline: 'Trending styles for everyone',
+    name: "Women's Clothing",
+    slug: 'womens-clothing',
+    tagline: 'Trending styles for her',
     gradient: 'from-rose-900 to-surface-950',
   },
   {
-    name: 'Home & Garden',
-    slug: 'home-garden',
-    tagline: 'Transform your living space',
+    name: 'Sneakers',
+    slug: 'sneakers',
+    tagline: 'Streetwear essentials',
     gradient: 'from-emerald-900 to-surface-950',
   },
   {
-    name: 'Beauty',
-    slug: 'beauty',
-    tagline: 'Premium skincare & cosmetics',
-    gradient: 'from-pink-900 to-surface-950',
+    name: 'Formal Shoes',
+    slug: 'formal-shoes',
+    tagline: 'Step up your shoe game',
+    gradient: 'from-amber-900 to-surface-950',
   },
   {
-    name: 'Sports',
-    slug: 'sports',
-    tagline: 'Gear up for greatness',
-    gradient: 'from-amber-900 to-surface-950',
+    name: 'Accessories',
+    slug: 'accessories',
+    tagline: 'Complete your look',
+    gradient: 'from-pink-900 to-surface-950',
   },
 ];
 
@@ -86,18 +86,18 @@ export default function HomePage() {
 
         <div className="relative z-10 max-w-6xl mx-auto text-center px-4 pt-32 pb-20">
           <p className="text-brand-400 font-bold text-sm tracking-[0.3em] uppercase mb-8 animate-fade-in">
-            Premium Shopping Experience
+            Premium Fashion & Footwear
           </p>
 
           <h1 className="text-5xl sm:text-7xl md:text-8xl lg:text-9xl font-black uppercase tracking-tighter leading-[0.9] mb-8 animate-slide-up">
-            Find Your<br />
+            Wear Your<br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-400 via-brand-300 to-brand-500">
-              Next Favorite
+              Confidence
             </span>
           </h1>
 
           <p className="text-lg md:text-xl text-surface-400 max-w-xl mx-auto leading-relaxed mb-12 animate-slide-up-delay">
-            Curated electronics, fashion, home goods and more. Fast delivery across Kenya with secure M-Pesa payments.
+            Curated clothing and shoes for every style. Fast delivery across Kenya with secure M-Pesa payments.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center animate-slide-up-delay-2">
