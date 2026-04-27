@@ -89,10 +89,16 @@ function CheckoutContent() {
         }
         try {
           const statusRes = await paymentsApi.checkStatus(orderId);
-          if (statusRes.data?.status?.ResultCode === 0) {
+          const resultCode = statusRes.data?.status?.ResultCode;
+          if (resultCode === 0 || resultCode === '0') {
             clearInterval(interval);
             clearCart();
             setStep('done');
+            setLoading(false);
+          } else if (resultCode === 1) {
+            clearInterval(interval);
+            toast.error('Payment was cancelled or failed. Please try again.');
+            setStep('payment');
             setLoading(false);
           }
         } catch {}
