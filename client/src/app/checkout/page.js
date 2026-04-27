@@ -95,7 +95,7 @@ function CheckoutContent() {
             clearCart();
             setStep('done');
             setLoading(false);
-          } else if (resultCode === 1) {
+          } else if (resultCode === 1 || resultCode === '1') {
             clearInterval(interval);
             toast.error('Payment was cancelled or failed. Please try again.');
             setStep('payment');
