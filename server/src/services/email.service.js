@@ -6,9 +6,9 @@
 const https = require('https');
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
-const FROM_EMAIL    = process.env.EMAIL_FROM || 'onboarding@resend.dev'; // Use your domain once verified
-const COMPANY       = process.env.COMPANY_NAME || 'DropKE';
-const CLIENT_URL    = process.env.CLIENT_URL || 'http://localhost:3000';
+const FROM_EMAIL    = process.env.EMAIL_FROM || 'noreply@tishcollection.store'; // Use your domain once verified
+const COMPANY       = process.env.COMPANY_NAME || 'TISH COLLECTION';
+const CLIENT_URL    = process.env.CLIENT_URL || 'http://tishcollection.store';
 
 // Send email via Resend HTTP API
 const sendEmail = ({ to, subject, html }) => {
