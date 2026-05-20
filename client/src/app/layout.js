@@ -42,8 +42,8 @@ export const metadata = {
     index:     true,
     follow:    true,
     googleBot: {
-      index:              true,
-      follow:             true,
+      index:               true,
+      follow:              true,
       'max-video-preview': -1,
       'max-image-preview': 'large',
       'max-snippet':       -1,
@@ -60,8 +60,8 @@ export const metadata = {
   },
 
   verification: {
-  <meta name="google-site-verification" content="Whvc7mvxC-YxG1hDPd4QVbZzZdVVpaER46uY8vhIaPM" />,
-},
+    google: 'Whvc7mvxC-YxG1hDPd4QVbZzZdVVpaER46uY8vhIaPM',
+  },
 
   applicationName: SITE_NAME,
   authors:        [{ name: SITE_NAME, url: SITE_URL }],
@@ -72,7 +72,12 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <head>
-        {/* Structured data — helps Google show rich results */}
+        {/* 
+          Structured data for Google rich results.
+          Using ClothingStore + ItemList schema.
+          Removed individual Product items from hasOfferCatalog
+          because they were triggering "missing offers/review/aggregateRating" errors.
+        */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -84,10 +89,18 @@ export default function RootLayout({ children }) {
               description: DESCRIPTION,
               image:       `${SITE_URL}/og-image.jpg`,
               priceRange:  'KES',
+              currenciesAccepted: 'KES',
+              paymentAccepted:    'M-Pesa, Cash',
               address: {
                 '@type':         'PostalAddress',
                 addressLocality: 'Nairobi',
+                addressRegion:   'Nairobi County',
                 addressCountry:  'KE',
+              },
+              geo: {
+                '@type':    'GeoCoordinates',
+                latitude:   '-1.2921',
+                longitude:  '36.8219',
               },
               contactPoint: {
                 '@type':           'ContactPoint',
@@ -96,26 +109,65 @@ export default function RootLayout({ children }) {
                 areaServed:        'KE',
                 availableLanguage: ['English', 'Swahili'],
               },
+              openingHoursSpecification: {
+                '@type':     'OpeningHoursSpecification',
+                dayOfWeek:  ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'],
+                opens:       '08:00',
+                closes:      '18:00',
+              },
               sameAs: [
                 'https://www.facebook.com/tishcollection',
                 'https://www.instagram.com/tishcollection',
                 'https://www.tiktok.com/@tishcollection',
               ],
-              hasOfferCatalog: {
-                '@type': 'OfferCatalog',
-                name:    'Tish Collection Clothing & Shoes',
-                itemListElement: [
-                  { '@type': 'Offer', itemOffered: { '@type': 'Product', name: 'Ladies Fashion Kenya' } },
-                  { '@type': 'Offer', itemOffered: { '@type': 'Product', name: 'Mens Clothes Kenya' } },
-                  { '@type': 'Offer', itemOffered: { '@type': 'Product', name: 'Shoes Kenya' } },
-                  { '@type': 'Offer', itemOffered: { '@type': 'Product', name: 'Accessories Kenya' } },
-                ],
-              },
               potentialAction: {
                 '@type':       'SearchAction',
                 target:       `${SITE_URL}/products?search={search_term_string}`,
                 'query-input': 'required name=search_term_string',
               },
+            }),
+          }}
+        />
+
+        {/* BreadcrumbList — helps Google show your site structure */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context':        'https://schema.org',
+              '@type':           'BreadcrumbList',
+              itemListElement: [
+                {
+                  '@type':   'ListItem',
+                  position:   1,
+                  name:       'Home',
+                  item:       SITE_URL,
+                },
+                {
+                  '@type':   'ListItem',
+                  position:   2,
+                  name:       'All Products',
+                  item:      `${SITE_URL}/products`,
+                },
+                {
+                  '@type':   'ListItem',
+                  position:   3,
+                  name:       'Ladies Fashion',
+                  item:      `${SITE_URL}/products?category=ladies-fashion`,
+                },
+                {
+                  '@type':   'ListItem',
+                  position:   4,
+                  name:       "Men's Fashion",
+                  item:      `${SITE_URL}/products?category=mens-fashion`,
+                },
+                {
+                  '@type':   'ListItem',
+                  position:   5,
+                  name:       'Shoes',
+                  item:      `${SITE_URL}/products?category=shoes`,
+                },
+              ],
             }),
           }}
         />
