@@ -60,7 +60,7 @@ export const metadata = {
   },
 
   verification: {
-  google: 'Whvc7mvxC-YxG1hDPd4QVbZzZdVVpaER46uY8vhIaPM',
+  <meta name="google-site-verification" content="Whvc7mvxC-YxG1hDPd4QVbZzZdVVpaER46uY8vhIaPM" />,
 },
 
   applicationName: SITE_NAME,
