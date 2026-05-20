@@ -1,63 +1,23 @@
 'use client';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
 import ProductCard from '../components/shop/ProductCard';
 import { productsApi } from '../lib/api';
-import {
-  TruckIcon,
-  ShieldCheckIcon,
-  CreditCardIcon,
-  ArrowPathIcon,
-  ArrowRightIcon,
-  ChevronRightIcon,
-} from '@heroicons/react/24/outline';
 
+// ✏️ Update these slugs to match your actual categories in Supabase
 const categories = [
-  {
-    name: "Men's Clothing",
-    slug: 'mens-clothing',
-    tagline: 'Sharp fits for every occasion',
-    gradient: 'from-blue-900 to-surface-950',
-  },
-  {
-    name: "Women's Clothing",
-    slug: 'womens-clothing',
-    tagline: 'Trending styles for her',
-    gradient: 'from-rose-900 to-surface-950',
-  },
-  {
-    name: 'Sneakers',
-    slug: 'sneakers',
-    tagline: 'Streetwear essentials',
-    gradient: 'from-emerald-900 to-surface-950',
-  },
-  {
-    name: 'Formal Shoes',
-    slug: 'formal-shoes',
-    tagline: 'Step up your shoe game',
-    gradient: 'from-amber-900 to-surface-950',
-  },
-  {
-    name: 'Accessories',
-    slug: 'accessories',
-    tagline: 'Complete your look',
-    gradient: 'from-pink-900 to-surface-950',
-  },
-];
-
-const trustFeatures = [
-  { icon: TruckIcon, title: 'Fast Delivery', desc: 'Nationwide shipping across Kenya' },
-  { icon: CreditCardIcon, title: 'M-Pesa Payments', desc: 'Pay securely with your phone' },
-  { icon: ShieldCheckIcon, title: 'Buyer Protection', desc: '100% secure transactions' },
-  { icon: ArrowPathIcon, title: 'Easy Returns', desc: 'Hassle-free return policy' },
+  { name: "Ladies Fashion", slug: 'ladies-fashion',  icon: '👗' },
+  { name: "Men's Fashion",  slug: 'mens-fashion',    icon: '👔' },
+  { name: 'Shoes',          slug: 'shoes',            icon: '👟' },
+  { name: 'Accessories',    slug: 'accessories',      icon: '👜' },
+  { name: 'Kids Fashion',   slug: 'kids-fashion',     icon: '🧒' },
 ];
 
 export default function HomePage() {
   const [featured, setFeatured] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading]   = useState(true);
 
   useEffect(() => {
     productsApi.getAll({ featured: true, limit: 8 })
@@ -67,208 +27,151 @@ export default function HomePage() {
   }, []);
 
   return (
-    <div className="min-h-screen flex flex-col bg-white">
-      <Navbar transparent />
+    <div className="min-h-screen flex flex-col">
+      <Navbar />
 
-      {/* ===== HERO — Full viewport, bold imagery ===== */}
-      <section className="relative min-h-screen flex items-center justify-center bg-surface-950 text-white overflow-hidden -mt-28 pt-28">
-        {/* Background layers */}
-        <div className="absolute inset-0 bg-gradient-to-b from-surface-950 via-surface-900 to-surface-950" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-brand-500/10 via-transparent to-transparent" />
-        <div className="absolute bottom-0 left-0 right-0 h-1/3 bg-gradient-to-t from-surface-950 to-transparent" />
-
-        {/* Decorative lines */}
-        <div className="absolute inset-0 opacity-[0.03]">
-          <div className="absolute top-1/4 left-0 right-0 h-px bg-white" />
-          <div className="absolute top-2/4 left-0 right-0 h-px bg-white" />
-          <div className="absolute top-3/4 left-0 right-0 h-px bg-white" />
-        </div>
-
-        <div className="relative z-10 max-w-6xl mx-auto text-center px-4 pt-32 pb-20">
-          <p className="text-brand-400 font-bold text-sm tracking-[0.3em] uppercase mb-8 animate-fade-in">
-            Premium Fashion & Footwear
+      {/* Hero Banner */}
+      <section className="bg-gradient-to-br from-red-700 via-red-800 to-pink-900 text-white py-20 px-4">
+        <div className="max-w-4xl mx-auto text-center">
+          <p className="text-red-200 text-sm font-semibold uppercase tracking-widest mb-3">
+            Kenya's Fashion Destination
           </p>
-
-          <h1 className="text-5xl sm:text-7xl md:text-8xl lg:text-9xl font-black uppercase tracking-tighter leading-[0.9] mb-8 animate-slide-up">
-            Wear Your<br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-400 via-brand-300 to-brand-500">
-              Confidence
-            </span>
+          <h1 className="text-4xl md:text-6xl font-extrabold mb-4 leading-tight">
+            Tish Collection 🇰🇪
           </h1>
-
-          <p className="text-lg md:text-xl text-surface-400 max-w-xl mx-auto leading-relaxed mb-12 animate-slide-up-delay">
-            Curated clothing and shoes for every style. Fast delivery across Kenya with secure M-Pesa payments.
+          <p className="text-lg md:text-xl text-red-100 mb-8 max-w-2xl mx-auto">
+            Shop the latest clothes, shoes and accessories. Trendy styles for men, women and kids.
+            Fast delivery across Kenya. Pay with M-Pesa.
           </p>
-
-          <div className="flex flex-col sm:flex-row gap-4 justify-center animate-slide-up-delay-2">
-            <Link href="/products" className="btn-hero bg-white text-surface-900 hover:bg-surface-100 hover:shadow-hero">
-              Shop Now <ArrowRightIcon className="w-5 h-5 inline ml-2" />
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link href="/products"
+              className="bg-white text-red-700 font-bold py-3 px-8 rounded-full hover:bg-red-50 transition-colors text-lg">
+              Shop New Arrivals
             </Link>
-            <Link href="/products?featured=true" className="btn-hero border-2 border-white/30 text-white hover:bg-white/10 hover:border-white/60">
-              Featured Deals
+            <Link href="/products?featured=true"
+              className="border-2 border-white text-white font-bold py-3 px-8 rounded-full hover:bg-white/10 transition-colors text-lg">
+              View Hot Deals 🔥
             </Link>
           </div>
-        </div>
-
-        {/* Scroll indicator */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
-          <div className="w-6 h-10 border-2 border-white/30 rounded-full flex items-start justify-center p-1.5">
-            <div className="w-1.5 h-3 bg-white/60 rounded-full" />
+          <div className="flex flex-wrap justify-center gap-6 mt-10 text-sm text-red-200">
+            <span>✅ M-Pesa Payments</span>
+            <span>🚚 Nationwide Delivery</span>
+            <span>🔒 Secure Shopping</span>
+            <span>↩️ Easy Returns</span>
           </div>
         </div>
       </section>
 
-      {/* ===== CATEGORY COLLECTIONS — Large immersive cards ===== */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <p className="section-subheading">Collections</p>
-            <h2 className="section-heading">Shop by Category</h2>
-          </div>
+      {/* Categories */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <h2 className="text-2xl font-bold text-gray-900 mb-2">Shop by Category</h2>
+        <p className="text-gray-500 text-sm mb-6">Find exactly what you're looking for</p>
+        <div className="grid grid-cols-3 sm:grid-cols-5 gap-4">
+          {categories.map((cat) => (
+            <Link key={cat.slug} href={`/products?category=${cat.slug}`}
+              className="flex flex-col items-center justify-center bg-white rounded-xl border border-gray-100 shadow-sm p-5 hover:shadow-md hover:border-red-200 transition-all group">
+              <span className="text-3xl mb-2">{cat.icon}</span>
+              <span className="text-xs sm:text-sm font-semibold text-gray-700 text-center group-hover:text-red-700">
+                {cat.name}
+              </span>
+            </Link>
+          ))}
+        </div>
+      </section>
 
-          {/* Top row: 3 cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-            {categories.slice(0, 3).map((cat, i) => (
-              <Link
-                key={cat.slug}
-                href={`/products?category=${cat.slug}`}
-                className={`group relative overflow-hidden rounded-2xl h-72 md:h-80 flex items-end p-8 transition-all duration-500 hover:scale-[1.02] ${i === 1 ? 'md:col-span-1' : ''}`}
-              >
-                <div className={`absolute inset-0 bg-gradient-to-br ${cat.gradient}`} />
-                <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-all duration-500" />
-                <div className="relative z-10">
-                  <p className="text-white/60 text-xs uppercase tracking-[0.2em] font-semibold mb-2">{cat.tagline}</p>
-                  <h3 className="text-white text-2xl md:text-3xl font-black uppercase tracking-tight">{cat.name}</h3>
-                  <div className="mt-4 flex items-center gap-2 text-white/80 text-sm font-semibold group-hover:text-white group-hover:gap-3 transition-all">
-                    Shop Now <ChevronRightIcon className="w-4 h-4" />
-                  </div>
-                </div>
-              </Link>
+      {/* Featured Products */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h2 className="text-2xl font-bold text-gray-900">🔥 Featured Styles</h2>
+            <p className="text-gray-500 text-sm mt-1">Hand-picked trending pieces</p>
+          </div>
+          <Link href="/products?featured=true" className="text-sm text-red-700 font-medium hover:underline">
+            View All →
+          </Link>
+        </div>
+
+        {loading ? (
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+            {[...Array(8)].map((_, i) => (
+              <div key={i} className="bg-white rounded-xl border border-gray-100 h-72 animate-pulse" />
             ))}
           </div>
-
-          {/* Bottom row: 2 cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {categories.slice(3).map((cat) => (
-              <Link
-                key={cat.slug}
-                href={`/products?category=${cat.slug}`}
-                className="group relative overflow-hidden rounded-2xl h-72 md:h-64 flex items-end p-8 transition-all duration-500 hover:scale-[1.02]"
-              >
-                <div className={`absolute inset-0 bg-gradient-to-br ${cat.gradient}`} />
-                <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-all duration-500" />
-                <div className="relative z-10">
-                  <p className="text-white/60 text-xs uppercase tracking-[0.2em] font-semibold mb-2">{cat.tagline}</p>
-                  <h3 className="text-white text-2xl md:text-3xl font-black uppercase tracking-tight">{cat.name}</h3>
-                  <div className="mt-4 flex items-center gap-2 text-white/80 text-sm font-semibold group-hover:text-white group-hover:gap-3 transition-all">
-                    Shop Now <ChevronRightIcon className="w-4 h-4" />
-                  </div>
-                </div>
-              </Link>
+        ) : featured.length === 0 ? (
+          <div className="text-center py-12 text-gray-400">
+            <p className="text-4xl mb-3">👗</p>
+            <p>No featured products yet. Add some from the admin panel!</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+            {featured.map((product) => (
+              <ProductCard key={product.id} product={product} />
             ))}
           </div>
-        </div>
+        )}
       </section>
 
-      {/* ===== FEATURED PRODUCTS ===== */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-surface-50">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex items-end justify-between mb-12">
-            <div>
-              <p className="section-subheading">Trending Now</p>
-              <h2 className="section-heading">Featured Deals</h2>
-            </div>
-            <Link href="/products?featured=true" className="hidden sm:flex items-center gap-2 text-sm uppercase tracking-wider font-bold text-surface-900 hover:text-brand-500 transition-colors">
-              View All <ArrowRightIcon className="w-4 h-4" />
-            </Link>
-          </div>
-
-          {loading ? (
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5">
-              {[...Array(8)].map((_, i) => (
-                <div key={i} className="bg-white rounded-2xl border border-surface-100 h-80 animate-pulse" />
-              ))}
-            </div>
-          ) : featured.length > 0 ? (
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5">
-              {featured.map((product) => (
-                <ProductCard key={product.id} product={product} />
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-16 bg-white rounded-2xl border border-surface-100">
-              <p className="text-surface-400 text-lg mb-4">No featured products yet</p>
-              <Link href="/products" className="btn-primary">Browse All Products</Link>
-            </div>
-          )}
-
-          <div className="sm:hidden text-center mt-8">
-            <Link href="/products?featured=true" className="btn-primary inline-flex items-center gap-2">
-              View All Products <ArrowRightIcon className="w-4 h-4" />
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* ===== TRUST / WHY SHOP WITH US ===== */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <p className="section-subheading">Why Choose Us</p>
-            <h2 className="section-heading">The TISH Difference</h2>
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
-            {trustFeatures.map((feature) => (
-              <div key={feature.title} className="text-center group">
-                <div className="w-16 h-16 mx-auto mb-5 bg-surface-950 rounded-2xl flex items-center justify-center group-hover:bg-brand-500 transition-all duration-300 group-hover:scale-110">
-                  <feature.icon className="w-7 h-7 text-white" />
-                </div>
-                <h3 className="font-bold text-surface-900 mb-2 uppercase tracking-wide text-sm">{feature.title}</h3>
-                <p className="text-surface-500 text-sm leading-relaxed">{feature.desc}</p>
+      {/* Why Shop With Us */}
+      <section className="bg-white py-12 px-4">
+        <div className="max-w-5xl mx-auto">
+          <h2 className="text-2xl font-bold text-gray-900 text-center mb-2">
+            Why Shop at Tish Collection Kenya?
+          </h2>
+          <p className="text-center text-gray-500 text-sm mb-8">
+            The best online fashion store in Kenya
+          </p>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            {[
+              { icon: '📱', title: 'M-Pesa Payment',    desc: 'Pay easily with Safaricom M-Pesa STK Push' },
+              { icon: '🚚', title: 'Fast Delivery',      desc: 'Delivery to Nairobi and across Kenya' },
+              { icon: '✨', title: 'Latest Trends',      desc: 'New arrivals every week' },
+              { icon: '↩️', title: 'Easy Returns',       desc: '7-day hassle-free returns' },
+            ].map((item) => (
+              <div key={item.title} className="text-center p-4">
+                <div className="text-4xl mb-3">{item.icon}</div>
+                <h3 className="font-bold text-gray-800 mb-1 text-sm">{item.title}</h3>
+                <p className="text-xs text-gray-500">{item.desc}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ===== M-PESA CTA — Bold full-width banner ===== */}
-      <section className="relative bg-surface-950 text-white overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_right,_var(--tw-gradient-stops))] from-brand-500/15 via-transparent to-transparent" />
-        <div className="relative max-w-5xl mx-auto text-center px-4 py-24">
-          <p className="text-brand-400 text-xs font-bold tracking-[0.3em] uppercase mb-6">Seamless Payments</p>
-          <h2 className="text-3xl sm:text-4xl md:text-6xl font-black uppercase tracking-tight mb-6 leading-tight">
-            Pay Easily<br />with M-Pesa
+      {/* SEO text block — helps Google understand your site */}
+      <section className="bg-gray-50 py-10 px-4">
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="text-xl font-bold text-gray-800 mb-3">
+            Buy Clothes & Shoes Online in Kenya
           </h2>
-          <p className="text-surface-400 text-lg mb-10 max-w-lg mx-auto leading-relaxed">
-            No credit card needed. Just enter your M-Pesa PIN and you&apos;re done. Fast, secure, and trusted by millions.
+          <p className="text-gray-500 text-sm leading-relaxed max-w-2xl mx-auto">
+            Tish Collection is Kenya's top online fashion store. We offer the latest clothes,
+            shoes and accessories for men, women and kids. Shop from Nairobi, Mombasa, Kisumu,
+            Nakuru and anywhere in Kenya. Pay with M-Pesa and get fast delivery to your door.
           </p>
-          <Link href="/products" className="btn-hero bg-brand-500 text-white hover:bg-brand-600 hover:shadow-glow">
-            Start Shopping <ArrowRightIcon className="w-5 h-5 inline ml-2" />
-          </Link>
+          <div className="flex flex-wrap justify-center gap-3 mt-6">
+            {['Ladies Clothes', 'Mens Fashion', 'Sneakers', 'Heels', 'Handbags', 'Kids Clothes', 'Dresses', 'Jeans'].map((tag) => (
+              <Link key={tag} href={`/products?search=${tag.toLowerCase()}`}
+                className="text-xs bg-white border border-gray-200 text-gray-600 px-3 py-1.5 rounded-full hover:border-red-300 hover:text-red-700 transition-colors">
+                {tag}
+              </Link>
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* ===== NEWSLETTER SIGNUP ===== */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
-        <div className="max-w-2xl mx-auto text-center">
-          <p className="section-subheading">Stay Updated</p>
-          <h2 className="text-2xl sm:text-3xl font-black uppercase tracking-tight text-surface-900 mb-4">
-            Get the Latest Deals
+      {/* M-Pesa CTA */}
+      <section className="bg-green-700 text-white py-12 px-4">
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="text-2xl md:text-3xl font-bold mb-3">
+            Pay with M-Pesa — Instant & Secure 📱
           </h2>
-          <p className="text-surface-500 mb-8">
-            Be the first to know about new arrivals, exclusive offers, and special discounts.
+          <p className="text-green-100 mb-6">
+            No bank card needed. Shop fashion online in Kenya and pay with your phone.
           </p>
-          <form className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto" onSubmit={(e) => e.preventDefault()}>
-            <input
-              type="email"
-              placeholder="Enter your email"
-              className="flex-1 border-2 border-surface-200 rounded-full px-6 py-3.5 text-sm focus:outline-none focus:border-surface-900 transition-colors"
-            />
-            <button type="submit" className="bg-surface-900 text-white font-bold py-3.5 px-8 rounded-full uppercase tracking-wider text-sm hover:bg-surface-800 transition-all">
-              Subscribe
-            </button>
-          </form>
+          <Link href="/products"
+            className="bg-white text-green-700 font-bold py-3 px-8 rounded-full hover:bg-green-50 transition-colors inline-block">
+            Start Shopping Now
+          </Link>
         </div>
       </section>
 
