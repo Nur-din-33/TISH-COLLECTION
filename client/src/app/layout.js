@@ -59,10 +59,9 @@ export const metadata = {
     apple: '/apple-touch-icon.png',
   },
 
-  // Uncomment after verifying on Google Search Console
-  // verification: {
-  //   google: 'your-google-verification-code',
-  // },
+  verification: {
+  google: 'Whvc7mvxC-YxG1hDPd4QVbZzZdVVpaER46uY8vhIaPM',
+},
 
   applicationName: SITE_NAME,
   authors:        [{ name: SITE_NAME, url: SITE_URL }],
